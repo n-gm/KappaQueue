@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using KappaQueue.Common.Interfaces;
 using KappaQueue.Models.Context;
 using KappaQueue.Utils;
 using Microsoft.AspNetCore.Builder;
@@ -88,8 +87,10 @@ namespace KappaQueue
                         case QueueDBContext.MSSQL:
                             options.UseSqlServer(Configuration.GetValue<string>("ConnectionString", ""));
                             break;
+                        case QueueDBContext.SQLITE:
                         default:
-                            return;
+                            options.UseSqlite(Configuration.GetValue<string>("ConnectionString", ""));
+                            break;
                     }
                 });
         }

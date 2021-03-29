@@ -144,6 +144,59 @@
             <response code="401">Пользователь не аутентифицирован</response>
             <response code="403">У пользователя нет прав на удаление должностей</response>
         </member>
+        <member name="T:KappaQueue.Controllers.QueuesController">
+            <summary>
+            Очереди
+            </summary>
+        </member>
+        <member name="M:KappaQueue.Controllers.QueuesController.#ctor(KappaQueue.Models.Context.QueueDBContext)">
+            <summary>
+            Конструктор контроллера
+            </summary>
+            <param name="context">Контекст БД</param>
+        </member>
+        <member name="M:KappaQueue.Controllers.QueuesController.GetQueues">
+            <summary>
+            Получение всех очередей
+            </summary>
+            <response code="200">В теле возвращен список очередей</response>
+            <response code="401">Пользователь не аутентифицирован</response>
+            <response code="403">У пользователя нет прав на просмотр должностей</response>
+        </member>
+        <member name="M:KappaQueue.Controllers.QueuesController.GetQueue(System.Int32)">
+            <summary>
+            Получение очереди с идентификатором id
+            </summary>
+            <response code="200">Возвращена информация по очереди</response>
+            <response code="401">Пользователь не аутентифицирован</response>
+            <response code="403">У пользователя нет прав на просмотр должностей</response>
+        </member>
+        <member name="M:KappaQueue.Controllers.QueuesController.AddQueue(KappaQueue.Common.DTO.QueueAddDto)">
+            <summary>
+            Создание очереди
+            </summary>
+            <response code="200">Возвращена информация по созданной очереди</response>
+            <response code="400">Неверное наименование или префикс очереди</response>
+            <response code="401">Пользователь не аутентифицирован</response>
+            <response code="403">У пользователя нет прав на создание должностей</response>
+        </member>
+        <member name="M:KappaQueue.Controllers.QueuesController.ChangePosition(System.Int32,KappaQueue.Common.DTO.QueueAddDto)">
+            <summary>
+            Изменение должности
+            </summary>
+            <response code="200">Возвращена информация по созданной должности</response>
+            <response code="400">Неверное наименование или префикс очереди, неверный id очереди</response>
+            <response code="401">Пользователь не аутентифицирован</response>
+            <response code="403">У пользователя нет прав на изменение должностей</response>
+        </member>
+        <member name="M:KappaQueue.Controllers.QueuesController.DeletePosition(System.Int32)">
+            <summary>
+            Удаление должности
+            </summary>
+            <response code="200">Должность удалена, возвращена информация по всем должностям</response>
+            <response code="401">Пользователь не аутентифицирован</response>
+            <response code="403">У пользователя нет прав на удаление должностей</response>
+        </member>
         <member name="T:KappaQueue.Controllers.UsersController">
             <summary>
             Управление пользователями
@@ -216,6 +269,41 @@
             <response code="200">Роль удалена, в тело запроса возвращен актуальный список ролей пользователя</response>
             <response code="401">Пользователь не аутентифицирован</response>
             <response code="403">У пользователя недостаточно прав для удаления ролей</response>
+        </member>
+        <member name="P:KappaQueue.Models.Context.QueueDBContext.UserRoles">
+            <summary>
+            Роли пользователя
+            </summary>
+        </member>
+        <member name="P:KappaQueue.Models.Context.QueueDBContext.Users">
+            <summary>
+            Список пользователей
+            </summary>
+        </member>
+        <member name="P:KappaQueue.Models.Context.QueueDBContext.Rooms">
+            <summary>
+            Список комнат
+            </summary>
+        </member>
+        <member name="P:KappaQueue.Models.Context.QueueDBContext.RoomTypes">
+            <summary>
+            Список типов комнат
+            </summary>
+        </member>
+        <member name="P:KappaQueue.Models.Context.QueueDBContext.Queues">
+            <summary>
+            Список очередей
+            </summary>
+        </member>
+        <member name="P:KappaQueue.Models.Context.QueueDBContext.QueueNodes">
+            <summary>
+            Этапы очереди
+            </summary>
+        </member>
+        <member name="P:KappaQueue.Models.Context.QueueDBContext.Positions">
+            <summary>
+            Список должностей
+            </summary>
         </member>
         <member name="M:KappaQueue.Models.Context.QueueDBContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <summary>

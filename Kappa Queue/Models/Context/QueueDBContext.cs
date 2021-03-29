@@ -10,17 +10,43 @@ namespace KappaQueue.Models.Context
     {
         public const string POSTGRESQL = "PGSQL";
         public const string MSSQL = "MSSQL";
+        public const string SQLITE = "SQLITE";
 
+        /// <summary>
+        /// Роли пользователя
+        /// </summary>
         public DbSet<UserRole> UserRoles { get; set; }
+        /// <summary>
+        /// Список пользователей
+        /// </summary>
         public DbSet<User> Users { get; set; }
+        /// <summary>
+        /// Список комнат
+        /// </summary>
         public DbSet<Room> Rooms { get; set; }
+        /// <summary>
+        /// Список типов комнат
+        /// </summary>
         public DbSet<RoomType> RoomTypes { get; set; }
+        /// <summary>
+        /// Список очередей
+        /// </summary>
         public DbSet<Queue> Queues { get; set; }
+        /// <summary>
+        /// Этапы очереди
+        /// </summary>
+        public DbSet<QueueNode> QueueNodes { get; set; }
+        /// <summary>
+        /// Список должностей
+        /// </summary>
         public DbSet<Position> Positions { get; set; }
                 
         public QueueDBContext(DbContextOptions<QueueDBContext> options)
             : base(options)
         {
+#if DEBUG
+            Database.EnsureDeleted();
+#endif
             if (Database.EnsureCreated())
             {
                 User.AfterSeed(this);

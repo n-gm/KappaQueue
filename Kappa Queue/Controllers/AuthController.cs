@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using KappaQueue.Common.DTO;
 using KappaQueue.Models.Context;
 using KappaQueue.Models.Users;

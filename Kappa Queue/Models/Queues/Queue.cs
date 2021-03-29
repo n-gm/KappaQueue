@@ -1,9 +1,8 @@
-﻿using System;
+﻿using KappaQueue.Common.DTO;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace KappaQueue.Models.Queues
 {
@@ -11,8 +10,27 @@ namespace KappaQueue.Models.Queues
     /// Класс очереди
     /// </summary>
     [Table("queues")]
+    [Index("Name", IsUnique = true)]
+    [Index("Prefix", IsUnique = true)]
     public class Queue : QueueEntity
     {
+        public Queue()
+        {
+
+        }
+
+        public Queue(QueueAddDto addQueue)
+        {
+            AssignData(addQueue);
+        }
+
+        public void AssignData(QueueAddDto data)
+        {
+            Name = data.Name;
+            Prefix = data.Prefix.ToUpper();
+            OutOfOrder = data.OutOfOrder;
+            Description = data.Description;
+        }
         /// <summary>
         /// Идентификатор очереди
         /// </summary>
