@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using KappaQueue.Models;
+using KappaQueueCommon.Models;
 using Microsoft.AspNetCore.Authorization;
 
 namespace KappaQueue.Controllers

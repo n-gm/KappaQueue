@@ -1,5 +1,5 @@
-﻿using KappaQueue.Common.DTO;
-using KappaQueue.Models.Users;
+﻿using KappaQueueCommon.Common.DTO;
+using KappaQueueCommon.Models.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

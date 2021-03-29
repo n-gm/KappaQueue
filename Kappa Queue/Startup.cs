@@ -1,7 +1,7 @@
 using System;
 using System.IO;
-using KappaQueue.Models.Context;
-using KappaQueue.Utils;
+using KappaQueueCommon.Models.Context;
+using KappaQueueCommon.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;

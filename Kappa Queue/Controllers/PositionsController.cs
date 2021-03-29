@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using KappaQueue.Common.DTO;
-using KappaQueue.Models.Context;
-using KappaQueue.Models.Positions;
+using KappaQueueCommon.Common.DTO;
+using KappaQueueCommon.Models.Context;
+using KappaQueueCommon.Models.Positions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

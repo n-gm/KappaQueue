@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KappaQueue", "Kappa Queue\KappaQueue.csproj", "{7B649337-A38A-4B2B-AAE0-0E676EEC9E98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KappaQueue", "Kappa Queue\KappaQueue.csproj", "{7B649337-A38A-4B2B-AAE0-0E676EEC9E98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KappaQueueCore", "KappaQueueCore\KappaQueueCore.csproj", "{5AEC3B31-F06B-44E8-ABCD-6299E2687EE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KappaQueueCommon", "KappaQueueCommon\KappaQueueCommon.csproj", "{6A914AFB-718E-4F57-B881-7CF929FC7572}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{7B649337-A38A-4B2B-AAE0-0E676EEC9E98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B649337-A38A-4B2B-AAE0-0E676EEC9E98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B649337-A38A-4B2B-AAE0-0E676EEC9E98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AEC3B31-F06B-44E8-ABCD-6299E2687EE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AEC3B31-F06B-44E8-ABCD-6299E2687EE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AEC3B31-F06B-44E8-ABCD-6299E2687EE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AEC3B31-F06B-44E8-ABCD-6299E2687EE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A914AFB-718E-4F57-B881-7CF929FC7572}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A914AFB-718E-4F57-B881-7CF929FC7572}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A914AFB-718E-4F57-B881-7CF929FC7572}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A914AFB-718E-4F57-B881-7CF929FC7572}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

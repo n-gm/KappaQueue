@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using KappaQueue.Common.DTO;
-using KappaQueue.Models.Context;
-using KappaQueue.Models.Queues;
+using KappaQueueCommon.Common.DTO;
+using KappaQueueCommon.Models.Context;
+using KappaQueueCommon.Models.Queues;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +17,7 @@ namespace KappaQueue.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class QueuesController : ControllerBase
+    public partial class QueuesController : ControllerBase
     {
         private readonly QueueDBContext _db;
 
@@ -35,7 +35,7 @@ namespace KappaQueue.Controllers
         /// </summary>
         /// <response code="200">В теле возвращен список очередей</response>
         /// <response code="401">Пользователь не аутентифицирован</response>
-        /// <response code="403">У пользователя нет прав на просмотр должностей</response>
+        /// <response code="403">У пользователя нет прав на просмотр очередей</response>
         [HttpGet]
         [ProducesResponseType(typeof(List<Queue>), 200)]
         [ProducesResponseType(401)]
@@ -44,7 +44,7 @@ namespace KappaQueue.Controllers
         [Authorize(Roles = "manager,admin,ticketer")]
         public ActionResult<List<Queue>> GetQueues()
         {
-            return Ok(_db.Queues.ToList());
+            return Ok(_db.Queues.Include(q => q.QueueNodes).ThenInclude(qn => qn.Position).ToList());
         }
 
         /// <summary>
@@ -52,9 +52,9 @@ namespace KappaQueue.Controllers
         /// </summary>
         /// <response code="200">Возвращена информация по очереди</response>
         /// <response code="401">Пользователь не аутентифицирован</response>
-        /// <response code="403">У пользователя нет прав на просмотр должностей</response>
+        /// <response code="403">У пользователя нет прав на просмотр очереди</response>
         [HttpGet("{id:int}")]
-        [ProducesResponseType(typeof(Queue), 200)]
+        [ProducesResponseType(typeof(List<Queue>), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
@@ -70,7 +70,7 @@ namespace KappaQueue.Controllers
         /// <response code="200">Возвращена информация по созданной очереди</response>
         /// <response code="400">Неверное наименование или префикс очереди</response>
         /// <response code="401">Пользователь не аутентифицирован</response>
-        /// <response code="403">У пользователя нет прав на создание должностей</response>
+        /// <response code="403">У пользователя нет прав на создание очереди</response>
         [HttpPost]
         [ProducesResponseType(typeof(Queue), 200)]
         [ProducesResponseType(401)]
@@ -88,7 +88,8 @@ namespace KappaQueue.Controllers
 
             Queue queue = new Queue(addQueue);            
 
-            if (_db.Queues.FirstOrDefault(q => q.Name == queue.Name || q.Prefix == queue.Prefix) != null)
+            if (_db.Queues.FirstOrDefault(q => q.Name == queue.Name || q.Prefix == queue.Prefix) != null
+                || _db.QueueGroups.FirstOrDefault(qg => qg.Prefix.Equals(queue.Prefix)) != null)
             {
                 return BadRequest("Данное имя очереди или префикс уже используется");
             }
@@ -99,12 +100,12 @@ namespace KappaQueue.Controllers
         }
 
         /// <summary>
-        /// Изменение должности
+        /// Изменение очереди
         /// </summary>
-        /// <response code="200">Возвращена информация по созданной должности</response>
+        /// <response code="200">Возвращена информация по измененной очереди</response>
         /// <response code="400">Неверное наименование или префикс очереди, неверный id очереди</response>
         /// <response code="401">Пользователь не аутентифицирован</response>
-        /// <response code="403">У пользователя нет прав на изменение должностей</response>
+        /// <response code="403">У пользователя нет прав на изменение очереди</response>
         [HttpPut("{id:int}")]
         [ProducesResponseType(typeof(Queue), 200)]
         [ProducesResponseType(401)]
@@ -125,7 +126,7 @@ namespace KappaQueue.Controllers
                 return BadRequest("Данное имя очереди или префикс уже используется");
             }
 
-            Queue queue = _db.Queues.FirstOrDefault(p => p.Id == id);
+            Queue queue = _db.Queues.Include(q => q.QueueNodes).ThenInclude(qn => qn.Position).FirstOrDefault(p => p.Id == id);
             
             if (queue == null)
             {
@@ -138,11 +139,11 @@ namespace KappaQueue.Controllers
         }
 
         /// <summary>
-        /// Удаление должности
+        /// Удаление очереди
         /// </summary>
-        /// <response code="200">Должность удалена, возвращена информация по всем должностям</response>
+        /// <response code="200">Очередь удалена, возвращена информация по всем очередям</response>
         /// <response code="401">Пользователь не аутентифицирован</response>
-        /// <response code="403">У пользователя нет прав на удаление должностей</response>
+        /// <response code="403">У пользователя нет прав на удаление очереди</response>
         [HttpDelete("{id:int}")]
         [ProducesResponseType(typeof(List<Queue>), 200)]
         [ProducesResponseType(401)]
@@ -154,7 +155,7 @@ namespace KappaQueue.Controllers
             Queue queue = _db.Queues.FirstOrDefault(p => p.Id == id);
             _db.Queues.Remove(queue);
             _db.SaveChanges();
-            return Ok(_db.Queues.ToList());
+            return Ok(_db.Queues.Include(q => q.QueueNodes).ThenInclude(qn => qn.Position).ToList());
         }
     }
 }

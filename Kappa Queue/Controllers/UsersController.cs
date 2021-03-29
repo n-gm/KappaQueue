@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using KappaQueue.Common.DTO;
-using KappaQueue.Models.Context;
-using KappaQueue.Models.Users;
+using System.Security.Claims;
+using KappaQueueCommon.Common.DTO;
+using KappaQueueCommon.Models.Context;
+using KappaQueueCommon.Models.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace KappaQueue.Controllers
 {
@@ -43,7 +45,7 @@ namespace KappaQueue.Controllers
 
             return Ok(user);
         }
-        
+
         /// <summary>
         /// Получить информацию по всем пользователям
         /// </summary>
@@ -51,7 +53,7 @@ namespace KappaQueue.Controllers
         /// <response code="200">Возвращен список всех пользователей в системе</response>
         /// <response code="401">Пользователь не аутентифицирован</response>
         /// <response code="403">У пользователя недостаточно прав для просмотра всех пользователей</response>
-        [HttpGet]    
+        [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(typeof(List<User>), 200)]
         [ProducesResponseType(403)]
@@ -60,7 +62,7 @@ namespace KappaQueue.Controllers
         {
             return Ok(_db.Users.Include(u => u.Roles).Include(u => u.Rooms).Include(u => u.Positions).ToList());
         }
-        
+
         /// <summary>
         /// Создать пользователя
         /// </summary>
@@ -77,10 +79,6 @@ namespace KappaQueue.Controllers
         [Authorize(Roles = "manager,admin")]
         public ActionResult<User> AddUser([FromBody]UserAddDto addUser)
         {
-            if (!HttpContext.User.IsInRole("manager") &&
-                !HttpContext.User.IsInRole("admin"))
-                return Forbid();
-
             if (_db.Users.FirstOrDefault(u => u.Username.Equals(addUser.Username)) != null)
                 return BadRequest("Пользователь с заданным логином уже существует");
 
@@ -90,6 +88,71 @@ namespace KappaQueue.Controllers
 
             return Ok(user);
         }
-        
+
+        /// <summary>
+        /// Изменить данные пользователя
+        /// </summary>
+        /// <returns>Список всех пользователей</returns>
+        /// <response code="200">Пользователь успешно создан, в ответ возвращена информация по пользователю</response>
+        /// <response code="401">Пользователь не аутентифицирован или его sid в токене не совпадает с идентификатором пользователя</response>
+        /// <response code="403">У пользователя недостаточно прав для удаления пользователей</response>
+        [HttpPut("{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(User), 200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [Consumes("application/json")]
+        [Authorize]
+        public ActionResult<User> ChangeUser(int id, [FromBody]UserChangeDto changeUser)
+        {
+            Claim sid = HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals(JwtRegisteredClaimNames.Sid));
+            if (sid == null)
+            {
+                return Unauthorized();
+            }
+
+            if (sid.Value.Equals(id.ToString())
+                || HttpContext.User.IsInRole("manager")
+                || HttpContext.User.IsInRole("admin"))
+            {
+                User user = _db.Users.FirstOrDefault(u => u.Id == id);
+                user.AssignData(changeUser);
+                _db.SaveChanges();
+
+                return Ok(user);
+            } else
+            {
+                return Forbid();
+            }
+        }
+
+        /// <summary>
+        /// Удаление пользователя
+        /// </summary>
+        /// <returns>Список всех пользователей</returns>
+        /// <response code="200">Пользователь успешно создан, в ответ возвращена информация по пользователю</response>
+        /// <response code="400">Пользователь попытался удалить системного пользователя</response>
+        /// <response code="401">Пользователь не аутентифицирован</response>
+        /// <response code="403">У пользователя недостаточно прав для удаления пользователей</response>
+        [HttpDelete("{id:int}")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(User), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [Authorize(Roles = "manager,admin")]
+        public ActionResult<User> DeleteUser(int id)
+        {
+            if (id == 1)
+            {
+                return BadRequest("Нельзя удалять системного пользователя");
+            }
+
+            User user = _db.Users.FirstOrDefault(u => u.Id == id);
+            user.Blocked = true;
+            _db.SaveChanges();
+
+            return Ok(user);
+        }
     }
 }

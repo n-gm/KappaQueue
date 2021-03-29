@@ -1,10 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using KappaQueue.Common.DTO;
-using KappaQueue.Models.Context;
-using KappaQueue.Models.Users;
-using KappaQueue.Utils;
+using KappaQueueCommon.Common.DTO;
+using KappaQueueCommon.Models.Context;
+using KappaQueueCommon.Models.Users;
+using KappaQueueCommon.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -85,7 +85,7 @@ namespace KappaQueue.Controllers
 
             int userId = int.Parse(sid.Value);
 
-            User user = _db.Users.FirstOrDefault(u => u.Id == userId);
+            User user = _db.Users.FirstOrDefault(u => u.Id == userId && !u.Blocked);
 
             if (user == null)
                 return BadRequest();
