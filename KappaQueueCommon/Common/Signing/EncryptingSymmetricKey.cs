@@ -1,16 +1,19 @@
 ﻿using KappaQueueCommon.Common.Interfaces;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 namespace KappaQueueCommon.Common.Signing
 {
-    public class SigningSymmetricKey : IJwtSigningEncodingKey, IJwtSigningDecodingKey
+    public class EncryptingSymmetricKey : IJwtEncryptingEncodingKey, IJwtEncryptingDecodingKey
     {
         private readonly SymmetricSecurityKey _secretKey;
 
-        public string SigningAlgorithm { get; } = SecurityAlgorithms.HmacSha256;
+        public string SigningAlgorithm { get; } = JwtConstants.DirectKeyUseAlg;
 
-        public SigningSymmetricKey(string key)
+        public string EncryptingAlgorithm { get; } = SecurityAlgorithms.Aes256CbcHmacSha512;
+
+        public EncryptingSymmetricKey(string key)
         {
             _secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
         }

@@ -1,9 +1,11 @@
 ﻿using KappaQueueCommon.Common.DTO;
+using KappaQueueCommon.Models.Clients;
 using KappaQueueCommon.Models.Queues;
 using KappaQueueCommon.Models.Users;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security;
 using System.Text.Json.Serialization;
 
 namespace KappaQueueCommon.Models.Positions
@@ -43,9 +45,12 @@ namespace KappaQueueCommon.Models.Positions
         public string Description { get; set; }
 
         [JsonIgnore]
-        public List<QueueNode> QueueNodes { get; set; } = new List<QueueNode>();
+        public List<QueueStage> QueueNodes { get; set; } = new List<QueueStage>();
         
         [JsonIgnore]
         public List<User> Users { get; set; } = new List<User>();
+
+        [JsonIgnore]
+        public List<ClientStage> ClientStages { get; set; } = new List<ClientStage>();
     }
 }

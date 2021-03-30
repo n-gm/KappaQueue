@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using KappaQueueCommon.Common.DTO;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Models.Queues;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +11,7 @@ namespace KappaQueue.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class QueueGroupsController : ControllerBase
+    public partial class QueueGroupsController : ControllerBase
     {
         private readonly QueueDBContext _db;
 
@@ -30,7 +27,7 @@ namespace KappaQueue.Controllers
         /// <summary>
         /// Получение всех групп очередей
         /// </summary>
-        /// <response code="200">В теле возвращен список очередей</response>
+        /// <response code="200">В теле возвращен список групп очередей</response>
         /// <response code="401">Пользователь не аутентифицирован</response>
         /// <response code="403">У пользователя нет прав на просмотр групп очередей</response>
         [HttpGet]
@@ -39,7 +36,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Authorize(Roles = "manager,admin,ticketer")]
-        public ActionResult<List<QueueGroup>> GetQueues()
+        public ActionResult<List<QueueGroup>> GetQueueGroups()
         {
             return Ok(_db.QueueGroups.Include(qg => qg.Queues).ThenInclude(q => q.QueueNodes).ThenInclude(qn => qn.Position).ToList());
         }
@@ -56,7 +53,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Authorize(Roles = "manager,admin")]
-        public ActionResult<QueueGroup> GetQueue(int id)
+        public ActionResult<QueueGroup> GetQueueGroup(int id)
         {
             return Ok(_db.QueueGroups.Include(qg => qg.Queues).ThenInclude(q => q.QueueNodes).ThenInclude(qn => qn.Position).FirstOrDefault(q => q.Id == id));
         }
@@ -76,7 +73,7 @@ namespace KappaQueue.Controllers
         [Produces("application/json")]
         [Consumes("application/json")]
         [Authorize(Roles = "manager,admin")]
-        public ActionResult<QueueGroup> AddQueue([FromBody] QueueGroupAddDto addQueueGroup)
+        public ActionResult<QueueGroup> AddQueueGroup([FromBody] QueueGroupAddDto addQueueGroup)
         {
             if (string.IsNullOrEmpty(addQueueGroup.Name) || string.IsNullOrEmpty(addQueueGroup.Prefix))
             {
@@ -149,7 +146,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Authorize(Roles = "manager,admin")]
-        public ActionResult<List<QueueGroup>> DeletePosition(int id)
+        public ActionResult<List<QueueGroup>> DeleteQueueGroup(int id)
         {
             if (id == 1)
             {

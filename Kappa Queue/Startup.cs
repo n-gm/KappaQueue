@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using KappaQueueCommon.Common.Interfaces;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Utils;
 using Microsoft.AspNetCore.Builder;
@@ -54,6 +55,9 @@ namespace KappaQueue
             });
 
             const string jwtSchemeName = "JwtBearer";
+            var signingDecodingKey = (IJwtSigningDecodingKey)AuthUtils.signingKey;
+            var encryptingDecodingKey = (IJwtEncryptingDecodingKey)AuthUtils.encryptionEncodingKey;
+
             services
                 .AddAuthentication(options => {
                     options.DefaultAuthenticateScheme = jwtSchemeName;
@@ -64,6 +68,7 @@ namespace KappaQueue
                     {
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = AuthUtils.signingKey.GetKey(),
+                        TokenDecryptionKey = encryptingDecodingKey.GetKey(),
 
                         ValidateIssuer = true,
                         ValidIssuer = "KappaQueue",

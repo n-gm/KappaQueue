@@ -1,5 +1,5 @@
-﻿using BCrypt.Net;
-using KappaQueueCommon.Common.DTO;
+﻿using KappaQueueCommon.Common.DTO;
+using KappaQueueCommon.Models.Clients;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Models.Positions;
 using KappaQueueCommon.Models.Rooms;
@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Net;
 using System.Text.Json.Serialization;
 
 namespace KappaQueueCommon.Models.Users
@@ -105,6 +106,9 @@ namespace KappaQueueCommon.Models.Users
         /// Список должностей сотрудника
         /// </summary>
         public List<Position> Positions { get; set; } = new List<Position>();
+
+        [JsonIgnore]
+        public List<ClientStageAssignement> Assignements { get; set; } = new List<ClientStageAssignement>();
         public User()
         {
             Blocked = false;

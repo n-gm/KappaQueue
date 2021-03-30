@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace KappaQueue.Controllers
 {
@@ -21,12 +20,12 @@ namespace KappaQueue.Controllers
         /// <response code="401">Пользователь не аутентифицирован</response>
         /// <response code="403">У пользователя нет прав на просмотр должностей очереди</response>
         [HttpGet("{id:int}/nodes")]
-        [ProducesResponseType(typeof(List<QueueNode>), 200)]
+        [ProducesResponseType(typeof(List<QueueStage>), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Authorize(Roles = "manager,admin,ticketer")]
-        public ActionResult<List<QueueNode>> GetQueueNodes(int id)
+        public ActionResult<List<QueueStage>> GetQueueNodes(int id)
         {
             try
             {
@@ -49,13 +48,13 @@ namespace KappaQueue.Controllers
         /// <response code="401">Пользователь не аутентифицирован</response>
         /// <response code="403">У пользователя нет прав на добавление должности в очередь</response>
         [HttpPost("{id:int}/nodes")]
-        [ProducesResponseType(typeof(List<QueueNode>), 200)]
+        [ProducesResponseType(typeof(List<QueueStage>), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Consumes("application/json")]
         [Authorize(Roles = "manager,admin")]
-        public ActionResult<List<QueueNode>> AddQueueNode(int id, [FromBody] QueueNodeAssignDto addNode)
+        public ActionResult<List<QueueStage>> AddQueueNode(int id, [FromBody] QueueNodeAssignDto addNode)
         {
             Queue queue = _db.Queues
                             .Include(q => q.QueueNodes)
@@ -73,7 +72,7 @@ namespace KappaQueue.Controllers
                 return BadRequest("Отсутствует должность с идентификатором " + id.ToString());
             }
 
-            QueueNode node = new QueueNode(addNode);
+            QueueStage node = new QueueStage(addNode);
 
             queue.QueueNodes.Add(node);
 
@@ -90,17 +89,17 @@ namespace KappaQueue.Controllers
         /// <response code="401">Пользователь не аутентифицирован</response>
         /// <response code="403">У пользователя нет прав на изменение очереди</response>
         [HttpPut("{id:int}/nodes/{positionId:int}")]
-        [ProducesResponseType(typeof(QueueNode), 200)]
+        [ProducesResponseType(typeof(QueueStage), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Consumes("application/json")]
         [Authorize(Roles = "manager,admin")]
-        public ActionResult<QueueNode> ChangeQueueNode(int id, int positionId, [FromBody] QueueNodeAssignDto changeQueueNode)
+        public ActionResult<QueueStage> ChangeQueueNode(int id, int positionId, [FromBody] QueueNodeAssignDto changeQueueNode)
         {
 
-            QueueNode queueNode = _db.QueueNodes.Include(qn => qn.Position).FirstOrDefault(qn => qn.Id == id && qn.PositionId == positionId);
+            QueueStage queueNode = _db.QueueNodes.Include(qn => qn.Position).FirstOrDefault(qn => qn.Id == id && qn.PositionId == positionId);
 
             if (queueNode == null)
             {
@@ -124,7 +123,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Authorize(Roles = "manager,admin")]
-        public ActionResult<List<QueueNode>> DeletePosition(int id, int positionId)
+        public ActionResult<List<QueueStage>> DeletePosition(int id, int positionId)
         {
             Queue queue = _db.Queues.Include(q => q.QueueNodes).FirstOrDefault(p => p.Id == id);
             queue.QueueNodes.Remove(queue.QueueNodes.FirstOrDefault(qn => qn.Id == positionId));

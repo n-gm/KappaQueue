@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace KappaQueueCommon.Common.DTO
+﻿namespace KappaQueueCommon.Common.DTO
 {
     public class UserChangeDto
     {

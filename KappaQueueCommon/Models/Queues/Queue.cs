@@ -77,6 +77,6 @@ namespace KappaQueueCommon.Models.Queues
         [MaxLength(128)]
         public string Description { get; set; }
 
-        public List<QueueNode> QueueNodes { get; set; } = new List<QueueNode>();
+        public List<QueueStage> QueueNodes { get; set; } = new List<QueueStage>();
     }
 }

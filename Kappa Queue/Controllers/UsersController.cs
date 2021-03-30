@@ -27,6 +27,23 @@ namespace KappaQueue.Controllers
         }
 
         /// <summary>
+        /// Получить информацию по всем пользователям
+        /// </summary>
+        /// <returns>Список всех пользователей</returns>
+        /// <response code="200">Возвращен список всех пользователей в системе</response>
+        /// <response code="401">Пользователь не аутентифицирован</response>
+        /// <response code="403">У пользователя недостаточно прав для просмотра всех пользователей</response>
+        [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(List<User>), 200)]
+        [ProducesResponseType(403)]
+        [Authorize(Roles = "manager,admin")]
+        public ActionResult<List<User>> GetUsers()
+        {
+            return Ok(_db.Users.Include(u => u.Roles).Include(u => u.Rooms).Include(u => u.Positions).ToList());
+        }
+
+        /// <summary>
         /// Получить информацию о пользователе
         /// </summary>
         /// <param name="id">Идентификатор пользователя</param>
@@ -45,24 +62,7 @@ namespace KappaQueue.Controllers
 
             return Ok(user);
         }
-
-        /// <summary>
-        /// Получить информацию по всем пользователям
-        /// </summary>
-        /// <returns>Список всех пользователей</returns>
-        /// <response code="200">Возвращен список всех пользователей в системе</response>
-        /// <response code="401">Пользователь не аутентифицирован</response>
-        /// <response code="403">У пользователя недостаточно прав для просмотра всех пользователей</response>
-        [HttpGet]
-        [Produces("application/json")]
-        [ProducesResponseType(typeof(List<User>), 200)]
-        [ProducesResponseType(403)]
-        [Authorize(Roles = "manager,admin")]
-        public ActionResult<List<User>> GetUsers()
-        {
-            return Ok(_db.Users.Include(u => u.Roles).Include(u => u.Rooms).Include(u => u.Positions).ToList());
-        }
-
+        
         /// <summary>
         /// Создать пользователя
         /// </summary>

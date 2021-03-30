@@ -42,7 +42,7 @@ namespace KappaQueue.Controllers
 
             if (user?.CheckPassword(password) ?? false)
             {
-                return Ok(AuthUtils.CreateToken(user));
+                return Ok(AuthUtils.CreateEncryptedToken(user));
             }
             else
             {
@@ -90,7 +90,7 @@ namespace KappaQueue.Controllers
             if (user == null)
                 return BadRequest();
 
-            return Ok(AuthUtils.CreateToken(user));
+            return Ok(AuthUtils.CreateEncryptedToken(user));
         }
     }
 }

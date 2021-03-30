@@ -5,15 +5,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KappaQueueCommon.Models.Queues
 {
-    [Table("queue_nodes")]
-    public class QueueNode
+    [Table("queue_stages")]
+    public class QueueStage
     {
-        public QueueNode()
+        public QueueStage()
         {
 
         }
 
-        public QueueNode(QueueNodeAssignDto data)
+        public QueueStage(QueueNodeAssignDto data)
         {
             AssignData(data);
         }
@@ -47,6 +47,13 @@ namespace KappaQueueCommon.Models.Queues
         [Required]
         public bool OutOfOrder { get; set; } = false;
 
+        /// <summary>
+        /// Признак того, что клиент освобождается при завершении этапа
+        /// </summary>
+        [Column("free_after_stage")]
+        [Required]
+        public bool FreeAfterStage { get; set; } = true;
+        
         /// <summary>
         /// Идентификатор очереди
         /// </summary>

@@ -40,7 +40,8 @@ namespace KappaQueueCommon.Models.Users
                 new UserRole { Id = 1, Name = "Администратор", Description = "Администратор", Code = "admin"},
                 new UserRole { Id = 2, Name = "Управляющий", Description = "Управляющий", Code = "manager"},
                 new UserRole { Id = 3, Name = "Выдача талона", Description = "Выдача талона", Code = "ticketer"},
-                new UserRole { Id = 4, Name = "Исполнитель", Description = "Исполнитель", Code = "performer"}
+                new UserRole { Id = 4, Name = "Исполнитель", Description = "Исполнитель", Code = "performer"},
+                new UserRole { Id = 5, Name = "Терминал", Description = "Терминал", Code = "terminal"}
             };
 
             return roles;

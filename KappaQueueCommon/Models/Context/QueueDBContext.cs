@@ -1,4 +1,5 @@
-﻿using KappaQueueCommon.Models.Positions;
+﻿using KappaQueueCommon.Models.Clients;
+using KappaQueueCommon.Models.Positions;
 using KappaQueueCommon.Models.Queues;
 using KappaQueueCommon.Models.Rooms;
 using KappaQueueCommon.Models.Users;
@@ -39,11 +40,23 @@ namespace KappaQueueCommon.Models.Context
         /// <summary>
         /// Этапы очереди
         /// </summary>
-        public DbSet<QueueNode> QueueNodes { get; set; }
+        public DbSet<QueueStage> QueueNodes { get; set; }
         /// <summary>
         /// Список должностей
         /// </summary>
         public DbSet<Position> Positions { get; set; }
+        /// <summary>
+        /// Список клиентов
+        /// </summary>
+        public DbSet<Client> Clients { get; set; }
+        /// <summary>
+        /// Список состояний клиента
+        /// </summary>
+        public DbSet<ClientState> ClientStates { get; set; }
+        /// <summary>
+        /// Список этапов очереди клиента
+        /// </summary>
+        public DbSet<ClientStage> ClientStages { get; set; }
                 
         public QueueDBContext(DbContextOptions<QueueDBContext> options)
             : base(options)
@@ -74,11 +87,63 @@ namespace KappaQueueCommon.Models.Context
                builder.Entity<UserRole>()
                    .HasIndex(ur => ur.Code)
                    .IsUnique(); */
-            builder
-                .Entity<QueueNode>()
-                .HasKey(qn => new { qn.QueueId, qn.PositionId })
-                .HasName("PK_queue_node");
+            
+            CreateKeys(builder);
+            CreateRelations(builder);
+            Seed(builder);
+            
+        }
 
+        /// <summary>
+        /// Заполнение БД первичными данными
+        /// </summary>
+        /// <param name="builder"></param>
+        private void Seed(ModelBuilder builder)
+        {
+            //Инициализируем роли
+            builder.Entity<UserRole>()
+                .HasData(UserRole.Seed());
+
+            //Инициализируем основных пользователей
+            builder.Entity<User>()
+                .HasData(User.Seed());
+
+            //Инициализируем группы
+            builder.Entity<QueueGroup>()
+                .HasData(QueueGroup.Seed());
+            
+            //Инициализируем состояния клиента
+            builder.Entity<ClientState>()
+                .HasData(ClientState.Seed());
+        }
+
+        /// <summary>
+        /// Создание первичных ключей
+        /// </summary>
+        /// <param name="builder"></param>
+        private void CreateKeys(ModelBuilder builder)
+        {
+            builder
+               .Entity<QueueStage>()
+               .HasKey(qn => new { qn.QueueId, qn.PositionId })
+               .HasName("PK_queue_stages");
+
+            builder
+                .Entity<ClientStage>()
+                .HasKey(cs => new { cs.ClientId, cs.PositionId, cs.Priority })
+                .HasName("PK_client_stages");
+
+            builder
+                .Entity<ClientStageAssignement>()
+                .HasKey(csa => new { csa.ClientId, csa.PositionId, csa.Priority, csa.UserId })
+                .HasName("PK_clientStagesAssignement");
+        }
+        /// <summary>
+        /// Создание связей между таблицами
+        /// </summary>
+        /// <param name="builder"></param>
+        private void CreateRelations(ModelBuilder builder)
+        {
             //Создаем связь между ролями и пользователями
             builder
                 .Entity<User>()
@@ -132,17 +197,50 @@ namespace KappaQueueCommon.Models.Context
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //Инициализируем роли
-            builder.Entity<UserRole>()
-                .HasData(UserRole.Seed());
-            
-            //Инициализируем основных пользователей
-            builder.Entity<User>()
-                .HasData(User.Seed());
+            builder
+                .Entity<ClientState>()
+                .HasMany(cs => cs.Clients)
+                .WithOne(c => c.State)
+                .HasForeignKey("StateId")
+                .HasConstraintName("FK_clients_clientStates")
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
 
-            //Инициализируем группы
-            builder.Entity<QueueGroup>()
-                .HasData(QueueGroup.Seed());
+            builder
+                .Entity<Client>()
+                .HasMany(cs => cs.ClientStages)
+                .WithOne(c => c.Client)
+                .HasForeignKey("ClientId")
+                .HasConstraintName("FK_clientStages_clients")
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder
+                .Entity<Position>()
+                .HasMany(p => p.ClientStages)
+                .WithOne(cs => cs.Position)
+                .HasForeignKey(fk => new { fk.PositionId })
+                .HasConstraintName("FK_clientStages_positions")
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder
+                .Entity<ClientStage>()
+                .HasMany(cs => cs.Assignements)
+                .WithOne(csa => csa.ClientStage)
+                .HasForeignKey(fk => new { fk.ClientId, fk.PositionId, fk.Priority })
+                .HasConstraintName("FK_clientStagesAssignement_clientStages")
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder
+                .Entity<User>()
+                .HasMany(u => u.Assignements)
+                .WithOne(csa => csa.User)
+                .HasForeignKey(fk => new { fk.UserId })
+                .HasConstraintName("FK_clientStagesAssignement_users")
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
