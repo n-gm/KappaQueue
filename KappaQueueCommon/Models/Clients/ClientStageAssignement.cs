@@ -12,16 +12,16 @@ namespace KappaQueueCommon.Models.Clients
     {
         [Column("client_id")]
         [Required]
-        public int ClientId { get; set; }
+        public uint ClientId { get; set; }
         [Column("position_id")]
         [Required]
-        public int PositionId { get; set; }
+        public uint PositionId { get; set; }
         [Column("priority")]
         [Required]
         public byte Priority { get; set; }
         [Column("user_id")]
         [Required]
-        public int UserId { get; set; }
+        public uint UserId { get; set; }
         [Column("assign_time")]
         [Required]
         public DateTime AssignTime { get; set; } = DateTime.Now;

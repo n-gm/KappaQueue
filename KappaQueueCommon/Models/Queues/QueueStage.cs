@@ -59,14 +59,14 @@ namespace KappaQueueCommon.Models.Queues
         /// </summary>
         [Column("queue_id")]
         [Required]
-        public int QueueId { get; set; }
+        public uint QueueId { get; set; }
 
         /// <summary>
         /// Идентификатор должности
         /// </summary>
         [Column("position_id")]
         [Required]
-        public int PositionId { get; set; }
+        public uint PositionId { get; set; }
         /// <summary>
         /// Очередь, к которой привязан этап
         /// </summary>

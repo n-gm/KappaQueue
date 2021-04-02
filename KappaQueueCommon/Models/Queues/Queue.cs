@@ -38,7 +38,7 @@ namespace KappaQueueCommon.Models.Queues
         [Column("id")]
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public uint Id { get; set; }
 
         /// <summary>
         /// Наименование очереди
@@ -65,7 +65,7 @@ namespace KappaQueueCommon.Models.Queues
         [Column("queue_group_id")]
         [Required]
         [JsonIgnore]
-        public int QueueGroupId { get; set; }
+        public uint QueueGroupId { get; set; }
 
         [ForeignKey("QueueGroupId")]
         [JsonIgnore]

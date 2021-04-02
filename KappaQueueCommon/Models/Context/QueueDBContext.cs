@@ -79,6 +79,7 @@ namespace KappaQueueCommon.Models.Context
             if (Database.EnsureCreated())
             {
                 User.AfterSeed(this);
+                UserRight.AfterSeed(this);
             }            
         }
 
@@ -130,6 +131,9 @@ namespace KappaQueueCommon.Models.Context
 
             builder.Entity<UserState>()
                 .HasData(UserState.Seed());
+
+            builder.Entity<UserRight>()
+                .HasData(UserRight.Seed());
         }
 
         /// <summary>
@@ -199,6 +203,12 @@ namespace KappaQueueCommon.Models.Context
                 .HasMany(u => u.Positions)
                 .WithMany(p => p.Users)
                 .UsingEntity(t => t.ToTable("user_positions"));
+
+            builder
+                .Entity<UserRole>()
+                .HasMany(ur => ur.UserRights)
+                .WithMany(ur => ur.UserRoles)
+                .UsingEntity(t => t.ToTable("roles_rights"));
 
             builder
                 .Entity<Position>()

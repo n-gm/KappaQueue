@@ -14,7 +14,7 @@ namespace KappaQueueCommon.Models.Users
     {
         [Column("user_id")]
         [Required]
-        public int UserId { get; set; }
+        public uint UserId { get; set; }
 
         [ForeignKey("UserId")]
         public User User { get; set; }

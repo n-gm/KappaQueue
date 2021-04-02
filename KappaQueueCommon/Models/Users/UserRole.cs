@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using KappaQueueCommon.Models.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Net;
 using System.Text.Json.Serialization;
 
 namespace KappaQueueCommon.Models.Users
@@ -33,6 +35,7 @@ namespace KappaQueueCommon.Models.Users
         [JsonIgnore]
         public List<User> Users { get; set; } = new List<User>();
 
+        public List<UserRight> UserRights { get; set; } = new List<UserRight>();
         public static UserRole[] Seed()
         {
             UserRole[] roles = new UserRole[]

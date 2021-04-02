@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace KappaQueueCore.Events
+namespace KappaQueueEvents.Events
 {
     public class Event
     {        

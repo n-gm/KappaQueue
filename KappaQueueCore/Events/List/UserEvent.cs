@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace KappaQueueCore.Events
+namespace KappaQueueEvents.Events.List
 {
     public class UserEvent : TimeEvent
     {

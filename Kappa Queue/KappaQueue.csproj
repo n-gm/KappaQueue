@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KappaQueueCommon\KappaQueueCommon.csproj" />
+    <ProjectReference Include="..\KappaQueueCore\KappaQueueEvents.csproj" />
   </ItemGroup>
 
   <ItemGroup>

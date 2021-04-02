@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 using KappaQueueCommon.Common.DTO;
+using KappaQueueCommon.Common.References;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Models.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -37,7 +38,7 @@ namespace KappaQueue.Controllers
         [Produces("application/json")]
         [ProducesResponseType(typeof(List<User>), 200)]
         [ProducesResponseType(403)]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.GET_USERS)]
         public ActionResult<List<User>> GetUsers()
         {
             return Ok(_db.Users.Include(u => u.Roles).Include(u => u.Rooms).Include(u => u.Positions).ToList());
@@ -55,7 +56,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(typeof(User), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.GET_USER)]
         public ActionResult<User> GetUser(int id)
         {
             User user = _db.Users.Include(u => u.Roles).Include(u => u.Rooms).FirstOrDefault(u => u.Id == id);
@@ -76,7 +77,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Consumes("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.CREATE_USER)]
         public ActionResult<User> AddUser([FromBody]UserAddDto addUser)
         {
             if (_db.Users.FirstOrDefault(u => u.Username.Equals(addUser.Username)) != null)
@@ -117,8 +118,7 @@ namespace KappaQueue.Controllers
             }
 
             if (sid.Value.Equals(id.ToString())
-                || HttpContext.User.IsInRole("manager")
-                || HttpContext.User.IsInRole("admin"))
+                || HttpContext.User.IsInRole(RightsRef.CHANGE_USER))
             {
                 User user = _db.Users.FirstOrDefault(u => u.Id == id);
                 user.AssignData(changeUser);
@@ -145,7 +145,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.DELETE_USER)]
         public ActionResult<User> DeleteUser(int id)
         {
             if (id == 1)

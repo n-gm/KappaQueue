@@ -7,6 +7,7 @@ using System.Text;
 
 namespace KappaQueueCommon.Models.Users
 {
+    [Table("user_status")]
     public class UserStatus
     {
         public UserStatus()
@@ -23,7 +24,7 @@ namespace KappaQueueCommon.Models.Users
         [Column("user_id")]
         [Required]
         [Key]
-        public int UserId { get; set; }
+        public uint UserId { get; set; }
         
         [ForeignKey("UserId")]
         public User User { get; set; }

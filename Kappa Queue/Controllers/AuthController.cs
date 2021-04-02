@@ -5,6 +5,7 @@ using KappaQueueCommon.Common.DTO;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Models.Users;
 using KappaQueueCommon.Utils;
+using KappaQueueEvents.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,8 +18,9 @@ namespace KappaQueue.Controllers
     public class AuthController : ControllerBase
     {
         private readonly QueueDBContext _db;
+        private readonly IEventHandler _handler; 
 
-        public AuthController(QueueDBContext context)
+        public AuthController(QueueDBContext context, IEventHandler eventHandler)
         {
             _db = context;
         }

@@ -16,11 +16,11 @@ namespace KappaQueueCommon.Models.Clients
         [Column("id")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public uint Id { get; set; }
 
         [Column("queue_id")]
         [Required]
-        public int QueueId { get; set; }
+        public uint QueueId { get; set; }
 
         [Column("number")]
         [Required]

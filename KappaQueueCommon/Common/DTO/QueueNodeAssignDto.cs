@@ -5,7 +5,7 @@
         /// <summary>
         /// Идентификатор должности
         /// </summary>
-        public int PositionId { get; set; }
+        public uint PositionId { get; set; }
         /// <summary>
         /// Приоритет этапа
         /// </summary>

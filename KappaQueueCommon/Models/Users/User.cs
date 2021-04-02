@@ -37,7 +37,7 @@ namespace KappaQueueCommon.Models.Users
         [Required]
         [Key]
         [JsonPropertyName("id")]
-        public int Id { get; set; }
+        public uint Id { get; set; }
 
         /// <summary>
         /// Имя пользователя
@@ -180,6 +180,7 @@ namespace KappaQueueCommon.Models.Users
             UserRole adminRole = context.UserRoles.FirstOrDefault(ur => ur.Id == 1);
 
             user.Roles.Add(adminRole);
+            user.Status = new UserStatus { StateId = 1, UserId = user.Id, LastUpdateTime = DateTime.Now };
 
             context.SaveChanges();
         }

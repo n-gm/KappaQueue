@@ -29,6 +29,26 @@
             <response code="401">В случае отсутствия аутентификации возвращается ошибка</response>
             <response code="402">В случае отсутствия пользователя или необходимого ключа в токене возвращается ошибка запроса</response>
         </member>
+        <member name="M:KappaQueue.Controllers.ClientsController.GetClients(System.Nullable{System.DateTime})">
+            <summary>
+            Получить информацию по всем клиентам
+            </summary>
+            <returns>Список всех клиентов</returns>
+            <param name="startTime">Дата, с которой возвращать выборку</param>
+            <response code="200">Возвращен список всех клиентов в системе с учетом фильтрации</response>
+            <response code="401">Пользователь не аутентифицирован</response>
+            <response code="403">У пользователя недостаточно прав для просмотра всех клиентов</response>
+        </member>
+        <member name="M:KappaQueue.Controllers.ClientsController.GetClient(System.Int32)">
+            <summary>
+            Получить информацию по всем пользователям
+            </summary>
+            <returns>Список всех пользователей</returns>
+            <param name="startTime">Дата, с которой возвращать выборку</param>
+            <response code="200">Возвращен список всех пользователей в системе</response>
+            <response code="401">Пользователь не аутентифицирован</response>
+            <response code="403">У пользователя недостаточно прав для просмотра всех пользователей</response>
+        </member>
         <member name="T:KappaQueue.Controllers.PositionsController">
             <summary>
             Должности

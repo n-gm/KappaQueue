@@ -33,7 +33,7 @@ namespace KappaQueueCommon.Models.Queues
         [Required]
         [Column("group_id")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public uint Id { get; set; }
 
         [Column("name")]
         [Required]

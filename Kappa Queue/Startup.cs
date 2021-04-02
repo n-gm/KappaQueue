@@ -3,6 +3,8 @@ using System.IO;
 using KappaQueueCommon.Common.Interfaces;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Utils;
+using KappaQueueEvents.Events;
+using KappaQueueEvents.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -11,25 +13,29 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace KappaQueue
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {      
+        {
+            CoreEventHandler handler = new CoreEventHandler();
+            services.AddSingleton<IEventHandler>(handler); 
             services.AddControllersWithViews();
             services.AddControllers();
 
-            services.AddSwaggerGen(c => {
+            services.AddSwaggerGen(c =>
+            {
                 var filePath = Path.Combine(System.AppContext.BaseDirectory, "KappaQueue.xml");
                 c.IncludeXmlComments(filePath);
 
@@ -60,11 +66,13 @@ namespace KappaQueue
             var encryptingDecodingKey = (IJwtEncryptingDecodingKey)AuthUtils.encryptionEncodingKey;
 
             services
-                .AddAuthentication(options => {
+                .AddAuthentication(options =>
+                {
                     options.DefaultAuthenticateScheme = jwtSchemeName;
                     options.DefaultChallengeScheme = jwtSchemeName;
                 })
-                .AddJwtBearer(jwtSchemeName, jwtBearerOptions => {
+                .AddJwtBearer(jwtSchemeName, jwtBearerOptions =>
+                {
                     jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
@@ -84,7 +92,8 @@ namespace KappaQueue
                 });
 
             services.AddDbContext<QueueDBContext>(
-                options => {
+                options =>
+                {
                     switch (Configuration.GetValue<string>("DataBaseType", "unidentified"))
                     {
                         case QueueDBContext.POSTGRESQL:
@@ -116,24 +125,23 @@ namespace KappaQueue
             }
 
             app.UseAuthentication();
-        //    app.UseHttpsRedirection();
+            //    app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthorization();
 
-            //Swagger не должен быть доступен для продуктивной среды
-            if (!env.IsProduction())
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
             {
-                app.UseSwagger();
+                //Swagger не должен давать возможность теста методов для продуктивной среды
+                if (env.IsProduction())
+                    c.SupportedSubmitMethods(new SubmitMethod[] { });
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Kappa Queue API");
+            });
 
-
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Kappa Queue API");
-                });
-            }
 
             app.UseEndpoints(endpoints =>
             {

@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace KappaQueueCore.Events
+namespace KappaQueueEvents.Events
 {
-    
-
     public class TimeEvent : Event
     {
         public delegate void TimeEventCallback(TimeEvent timeEvent);
         private Timer _timer;
-        private bool Repeatable { get; }
+        public bool Repeatable { get; }
         public TimeEventCallback OnEventTriggered;
 
         public TimeEvent(string name, int eventTime, bool repeatable = false)

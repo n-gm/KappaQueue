@@ -50,7 +50,10 @@ namespace KappaQueueCommon.Utils
 
             foreach (UserRole role in user.Roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role.Code));
+                foreach (UserRight right in role.UserRights)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, right.Code));
+                }
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
