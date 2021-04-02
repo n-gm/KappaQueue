@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 
 namespace KappaQueueCommon.Models.Users
@@ -71,6 +72,8 @@ namespace KappaQueueCommon.Models.Users
         [MaxLength(32)]
         public string Username { get; set; }
         
+        public UserStatus Status { get; set; }
+
         /// <summary>
         /// Установка пароля пользователя
         /// </summary>
@@ -109,6 +112,10 @@ namespace KappaQueueCommon.Models.Users
 
         [JsonIgnore]
         public List<ClientStageAssignement> Assignements { get; set; } = new List<ClientStageAssignement>();
+
+        [JsonIgnore]
+        public List<UserJournal> Journal { get; set; } = new List<UserJournal>();
+
         public User()
         {
             Blocked = false;

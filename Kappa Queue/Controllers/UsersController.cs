@@ -83,7 +83,12 @@ namespace KappaQueue.Controllers
                 return BadRequest("Пользователь с заданным логином уже существует");
 
             User user = new User(addUser);
+
             _db.Users.Add(user);
+            _db.SaveChanges();
+
+            UserStatus status = new UserStatus(user);
+            _db.UserStatuses.Add(status);
             _db.SaveChanges();
 
             return Ok(user);

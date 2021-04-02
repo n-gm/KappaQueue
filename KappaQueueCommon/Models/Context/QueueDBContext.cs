@@ -57,6 +57,18 @@ namespace KappaQueueCommon.Models.Context
         /// Список этапов очереди клиента
         /// </summary>
         public DbSet<ClientStage> ClientStages { get; set; }
+        /// <summary>
+        /// Журналы пользователей
+        /// </summary>
+        public DbSet<UserJournal> UserJournals { get; set; }
+        /// <summary>
+        /// Состояния пользователей
+        /// </summary>
+        public DbSet<UserState> UserStates { get; set; }
+        /// <summary>
+        /// Список статусов пользователя
+        /// </summary>
+        public DbSet<UserStatus> UserStatuses { get; set; }
                 
         public QueueDBContext(DbContextOptions<QueueDBContext> options)
             : base(options)
@@ -115,6 +127,9 @@ namespace KappaQueueCommon.Models.Context
             //Инициализируем состояния клиента
             builder.Entity<ClientState>()
                 .HasData(ClientState.Seed());
+
+            builder.Entity<UserState>()
+                .HasData(UserState.Seed());
         }
 
         /// <summary>
@@ -137,6 +152,11 @@ namespace KappaQueueCommon.Models.Context
                 .Entity<ClientStageAssignement>()
                 .HasKey(csa => new { csa.ClientId, csa.PositionId, csa.Priority, csa.UserId })
                 .HasName("PK_clientStagesAssignement");
+
+            builder
+                .Entity<UserJournal>()
+                .HasKey(uj => new { uj.OpTime, uj.UserId })
+                .HasName("PK_userJournal");
         }
         /// <summary>
         /// Создание связей между таблицами
@@ -166,6 +186,13 @@ namespace KappaQueueCommon.Models.Context
                 .HasMany(u => u.Rooms)
                 .WithMany(r => r.Users)
                 .UsingEntity(t => t.ToTable("user_rooms"));
+
+            builder
+                .Entity<UserStatus>()
+                .HasOne(us => us.User)
+                .WithOne(u => u.Status)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder
                 .Entity<User>()

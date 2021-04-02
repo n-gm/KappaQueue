@@ -28,6 +28,7 @@ namespace KappaQueue
         {      
             services.AddControllersWithViews();
             services.AddControllers();
+
             services.AddSwaggerGen(c => {
                 var filePath = Path.Combine(System.AppContext.BaseDirectory, "KappaQueue.xml");
                 c.IncludeXmlComments(filePath);
@@ -122,13 +123,17 @@ namespace KappaQueue
 
             app.UseAuthorization();
 
-            app.UseSwagger();
-            
-
-            app.UseSwaggerUI(c =>
+            //Swagger не должен быть доступен для продуктивной среды
+            if (!env.IsProduction())
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Queue API");
-            });
+                app.UseSwagger();
+
+
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Kappa Queue API");
+                });
+            }
 
             app.UseEndpoints(endpoints =>
             {
