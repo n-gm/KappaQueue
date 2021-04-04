@@ -1,4 +1,5 @@
 ﻿using KappaQueueCommon.Common.DTO;
+using KappaQueueCommon.Common.References;
 using KappaQueueCommon.Models.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(typeof(List<UserRole>), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_USERS + "," + RightsRef.CHANGE_USER)]
         public ActionResult<List<UserRole>> GetUserRoles(int id)
         {
             User user = _db.Users.Include(u => u.Roles).FirstOrDefault(u => u.Id == id);
@@ -45,7 +46,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(typeof(List<UserRole>), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_USERS + "," + RightsRef.CHANGE_USER)]
         public ActionResult<List<UserRole>> AddUserRoles(int id, [FromBody] UserRoleAddDto addRoles)
         {
             User user = _db.Users.Include(u => u.Roles).FirstOrDefault(u => u.Id == id);
@@ -53,43 +54,14 @@ namespace KappaQueue.Controllers
             foreach (byte roleId in addRoles.Roles)
             {
                 if (user.Roles.FirstOrDefault(u => u.Id == roleId) == null)
+                {
                     user.Roles.Add(_db.UserRoles.FirstOrDefault(ur => ur.Id == roleId));
+                    _db.SaveChanges();
+                }
             }
 
-            _db.SaveChanges();
-
             return Ok(user.Roles);
-        }
-
-        /// <summary>
-        /// Изменить роли пользователя - недостающие роли добавляются, лишние - удаляются
-        /// </summary>
-        /// <param name="id">Идентификатор пользователя</param>
-        /// <param name="addRoles">Список добавляемых идентификаторов ролей</param>
-        /// <response code="200">Роли изменены, в тело запроса возвращен актуальный список ролей пользователя</response>
-        /// <response code="401">Пользователь не аутентифицирован</response>
-        /// <response code="403">У пользователя недостаточно прав для изменения ролей</response>
-        [HttpPut("{id}/roles")]
-        [Produces("application/json")]
-        [ProducesResponseType(typeof(List<UserRole>), 200)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(403)]
-        [Authorize(Roles = "manager,admin")]
-        public ActionResult<List<UserRole>> ChangeUserRoles(int id, [FromBody] UserRoleAddDto addRoles)
-        {
-            User user = _db.Users.Include(u => u.Roles).FirstOrDefault(u => u.Id == id);
-
-            user.Roles.Clear();
-
-            foreach (byte roleId in addRoles.Roles)
-            {
-                user.Roles.Add(_db.UserRoles.FirstOrDefault(ur => ur.Id == roleId));
-            }
-
-            _db.SaveChanges();
-
-            return Ok(user.Roles);
-        }
+        }        
 
         /// <summary>
         /// Удалить роль пользователя
@@ -104,7 +76,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(typeof(List<UserRole>), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_USERS + "," + RightsRef.CHANGE_USER)]
         public ActionResult<List<UserRole>> ChangeUserRoles(int id, byte roleId)
         {
             User user = _db.Users.Include(u => u.Roles).FirstOrDefault(u => u.Id == id);

@@ -1,31 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace KappaQueueCommon.Common.Classes
+﻿namespace KappaQueueCommon.Common.Classes
 {
     public enum ClientStateEnum : byte
     {
         /// <summary>
+        /// Создан, но не активирован
+        /// </summary>
+        NOT_ACTIVATED = 1,
+        /// <summary>
         /// Техническое ожидаение после выдачи талона или завершения обследования
         /// </summary>
-        WAITING = 1,
+        WAITING = 2,
         /// <summary>
         /// Свободен
         /// </summary>
-        FREE = 2,
+        FREE = 3,
         /// <summary>
         /// Вызван
         /// </summary>
-        CALLED = 3,
+        CALLED = 4,
         /// <summary>
         /// Обслуживается
         /// </summary>
-        SERVICING = 4,
+        SERVICING = 5,
         /// <summary>
         /// Прием полностью закончен
         /// </summary>
-        SERVICED = 5,
+        SERVICED = 6,
         /// <summary>
         /// Прохождение очереди приостановлено
         /// </summary>

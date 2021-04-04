@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using KappaQueueCommon.Common.DTO;
+using KappaQueueCommon.Common.References;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Models.Queues;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +36,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin,ticketer")]
+        [Authorize(Roles = RightsRef.ALL_QUEUE_GROUPS + "," + RightsRef.GET_QUEUE_GROUPS)]
         public ActionResult<List<QueueGroup>> GetQueueGroups()
         {
             return Ok(_db.QueueGroups.Include(qg => qg.Queues).ThenInclude(q => q.QueueNodes).ThenInclude(qn => qn.Position).ToList());
@@ -52,7 +53,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_QUEUE_GROUPS + "," + RightsRef.GET_QUEUE_GROUP)]
         public ActionResult<QueueGroup> GetQueueGroup(int id)
         {
             return Ok(_db.QueueGroups.Include(qg => qg.Queues).ThenInclude(q => q.QueueNodes).ThenInclude(qn => qn.Position).FirstOrDefault(q => q.Id == id));
@@ -72,7 +73,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_QUEUE_GROUPS + "," + RightsRef.CREATE_QUEUE_GROUP)]
         public ActionResult<QueueGroup> AddQueueGroup([FromBody] QueueGroupAddDto addQueueGroup)
         {
             if (string.IsNullOrEmpty(addQueueGroup.Name) || string.IsNullOrEmpty(addQueueGroup.Prefix))
@@ -107,7 +108,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_QUEUE_GROUPS + "," + RightsRef.CHANGE_QUEUE_GROUP)]
         public ActionResult<QueueGroup> ChangeQueueGroup(int id, [FromBody] QueueGroupAddDto changeQueueGroup)
         {
             if (string.IsNullOrEmpty(changeQueueGroup.Name) || string.IsNullOrEmpty(changeQueueGroup.Prefix))
@@ -145,7 +146,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_QUEUE_GROUPS + "," + RightsRef.DELETE_QUEUE_GROUP)]
         public ActionResult<List<QueueGroup>> DeleteQueueGroup(int id)
         {
             if (id == 1)

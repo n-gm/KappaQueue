@@ -12,12 +12,12 @@ namespace KappaQueueCommon.Models.Rooms
         [Column("room_id")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public ushort Id { get; set; }
-
-        [Column("room_type")]
-        [ForeignKey("RoomTypeId")]
-        [Required]
+                
+        [ForeignKey("RoomTypeId")]        
         public RoomType RoomType { get; set; }
 
+        [Column("room_type_id")]
+        [Required]
         public byte RoomTypeId { get; set; }
 
         [Column("number")]
@@ -26,8 +26,7 @@ namespace KappaQueueCommon.Models.Rooms
 
         [Column("blocked")]
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public bool Blocked { get; set; }
+        public bool Blocked { get; set; } = false;
 
         [JsonIgnore]
         public List<User> Users { get; set; } = new List<User>();

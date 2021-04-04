@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using KappaQueueCommon.Common.DTO;
+using KappaQueueCommon.Common.References;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Models.Positions;
 using Microsoft.AspNetCore.Authorization;
@@ -32,7 +33,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_POSITIONS + "," + RightsRef.GET_POSITIONS)]
         public ActionResult<List<Position>> GetPositions()
         {
             return Ok(_db.Positions.ToList());
@@ -49,7 +50,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_POSITIONS + "," + RightsRef.GET_POSITION)]
         public ActionResult<List<Position>> GetPosition(int id)
         {
             return Ok(_db.Positions.FirstOrDefault(p => p.Id == id));
@@ -67,7 +68,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_POSITIONS + "," + RightsRef.CREATE_POSITION)]
         public ActionResult<Position> AddPosition([FromBody] PositionAddDto addPosition)
         {
             Position position = new Position(addPosition);
@@ -88,7 +89,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_POSITIONS + "," + RightsRef.CHANGE_POSITION)]
         public ActionResult<Position> ChangePosition(int id, [FromBody] PositionAddDto changePosition)
         {
             Position position = _db.Positions.FirstOrDefault(p => p.Id == id);
@@ -108,12 +109,15 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_POSITIONS + "," + RightsRef.DELETE_POSITION)]
         public ActionResult<List<Position>> DeletePosition(int id)
         {
             Position position = _db.Positions.FirstOrDefault(p => p.Id == id);
-            _db.Positions.Remove(position);
-            _db.SaveChanges();
+            if (position != null)
+            {
+                _db.Positions.Remove(position);
+                _db.SaveChanges();
+            }
             return Ok(_db.Positions.ToList());
         }
     }

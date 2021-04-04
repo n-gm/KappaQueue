@@ -13,12 +13,12 @@ namespace KappaQueueCommon.Models.Queues
 
         }
 
-        public QueueStage(QueueNodeAssignDto data)
+        public QueueStage(QueueStageAssignDto data)
         {
             AssignData(data);
         }
 
-        public void AssignData(QueueNodeAssignDto data)
+        public void AssignData(QueueStageAssignDto data)
         {
             OutOfOrder = data.OutOfOrder;
             PositionId = data.PositionId;

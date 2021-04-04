@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections;
 
 namespace KappaQueueCommon.Common.References
 {
@@ -41,11 +38,23 @@ namespace KappaQueueCommon.Common.References
         public const string CHANGE_POSITION = "changePosition";
         public const string DELETE_POSITION = "deletePosition";
         #endregion
+        #region Clients
+        public const string ALL_CLIENTS = "allClients";
+        public const string GET_CLIENTS = "getClients";
+        public const string GET_CLIENT = "getClient";
+        public const string CREATE_CLIENT = "createClient";
+        public const string CHANGE_CLIENT = "changeClient";
+        public const string DELETE_CLIENT = "deleteQueue";
+        #endregion
 
+        public static string Rights (params string[] param)
+        {
+            return string.Join(",", param);
+        }
 
         public IEnumerator GetEnumerator()
         {
-            return new String[]
+            return new string[]
             {
                 ALL_USERS,
                 GET_USERS,
@@ -72,7 +81,13 @@ namespace KappaQueueCommon.Common.References
                 GET_POSITION,
                 CREATE_POSITION,
                 CHANGE_POSITION,
-                DELETE_POSITION
+                DELETE_POSITION,
+                ALL_CLIENTS,
+                GET_CLIENTS,
+                GET_CLIENT,
+                CREATE_CLIENT,
+                CHANGE_CLIENT,
+                DELETE_CLIENT
             }.GetEnumerator();
         }
     }

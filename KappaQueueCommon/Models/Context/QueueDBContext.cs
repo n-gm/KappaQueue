@@ -12,6 +12,7 @@ namespace KappaQueueCommon.Models.Context
         public const string POSTGRESQL = "PGSQL";
         public const string MSSQL = "MSSQL";
         public const string SQLITE = "SQLITE";
+        public const string INMEMORY = "MEMORY";
 
         /// <summary>
         /// Роли пользователя
@@ -40,7 +41,7 @@ namespace KappaQueueCommon.Models.Context
         /// <summary>
         /// Этапы очереди
         /// </summary>
-        public DbSet<QueueStage> QueueNodes { get; set; }
+        public DbSet<QueueStage> QueueStages { get; set; }
         /// <summary>
         /// Список должностей
         /// </summary>
@@ -69,26 +70,35 @@ namespace KappaQueueCommon.Models.Context
         /// Список статусов пользователя
         /// </summary>
         public DbSet<UserStatus> UserStatuses { get; set; }
+        /// <summary>
+        /// Права пользователей
+        /// </summary>
+        public DbSet<UserRight> UserRights { get; set; }
                 
         public QueueDBContext(DbContextOptions<QueueDBContext> options)
             : base(options)
-        {
-#if DEBUG
-            Database.EnsureDeleted();
-#endif
+        {            
             if (Database.EnsureCreated())
             {
                 User.AfterSeed(this);
                 UserRight.AfterSeed(this);
             }            
         }
+/*
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
 
+            optionsBuilder.LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name });
+        }
+*/
         /// <summary>
         /// Инициализируем модели при создании структур
         /// </summary>
         /// <param name="builder"></param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            
             /*   builder.Entity<User>()
                    .HasIndex(u => u.Username)
                    .IsUnique();

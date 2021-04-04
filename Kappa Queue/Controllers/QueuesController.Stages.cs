@@ -1,4 +1,5 @@
 ﻿using KappaQueueCommon.Common.DTO;
+using KappaQueueCommon.Common.References;
 using KappaQueueCommon.Models.Positions;
 using KappaQueueCommon.Models.Queues;
 using Microsoft.AspNetCore.Authorization;
@@ -19,13 +20,13 @@ namespace KappaQueue.Controllers
         /// <response code="400">Передан неверный идентификатор очереди</response>
         /// <response code="401">Пользователь не аутентифицирован</response>
         /// <response code="403">У пользователя нет прав на просмотр должностей очереди</response>
-        [HttpGet("{id:int}/nodes")]
+        [HttpGet("{id:int}/stages")]
         [ProducesResponseType(typeof(List<QueueStage>), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin,ticketer")]
-        public ActionResult<List<QueueStage>> GetQueueNodes(int id)
+        [Authorize(Roles = RightsRef.ALL_QUEUES + "," + RightsRef.GET_QUEUE + "," + RightsRef.GET_QUEUES)]
+        public ActionResult<List<QueueStage>> GetQueueStages(int id)
         {
             try
             {
@@ -47,14 +48,14 @@ namespace KappaQueue.Controllers
         /// <response code="400">Передан неверный идентификатор очереди или должности</response>
         /// <response code="401">Пользователь не аутентифицирован</response>
         /// <response code="403">У пользователя нет прав на добавление должности в очередь</response>
-        [HttpPost("{id:int}/nodes")]
+        [HttpPost("{id:int}/stages")]
         [ProducesResponseType(typeof(List<QueueStage>), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [Authorize(Roles = "manager,admin")]
-        public ActionResult<List<QueueStage>> AddQueueNode(int id, [FromBody] QueueNodeAssignDto addNode)
+        [Authorize(Roles = RightsRef.ALL_QUEUES + "," + RightsRef.ASSIGN_POSITION_TO_QUEUE)]
+        public ActionResult<List<QueueStage>> AddQueueStage(int id, [FromBody] QueueStageAssignDto addNode)
         {
             Queue queue = _db.Queues
                             .Include(q => q.QueueNodes)
@@ -88,18 +89,18 @@ namespace KappaQueue.Controllers
         /// <response code="400">Неверное наименование или префикс очереди, неверный id очереди</response>
         /// <response code="401">Пользователь не аутентифицирован</response>
         /// <response code="403">У пользователя нет прав на изменение очереди</response>
-        [HttpPut("{id:int}/nodes/{positionId:int}")]
+        [HttpPut("{id:int}/stages/{positionId:int}")]
         [ProducesResponseType(typeof(QueueStage), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [Authorize(Roles = "manager,admin")]
-        public ActionResult<QueueStage> ChangeQueueNode(int id, int positionId, [FromBody] QueueNodeAssignDto changeQueueNode)
+        [Authorize(Roles = RightsRef.ALL_QUEUES + "," + RightsRef.ASSIGN_POSITION_TO_QUEUE)]
+        public ActionResult<QueueStage> ChangeQueueNode(int id, int positionId, [FromBody] QueueStageAssignDto changeQueueNode)
         {
 
-            QueueStage queueNode = _db.QueueNodes.Include(qn => qn.Position).FirstOrDefault(qn => qn.Id == id && qn.PositionId == positionId);
+            QueueStage queueNode = _db.QueueStages.Include(qn => qn.Position).FirstOrDefault(qn => qn.Id == id && qn.PositionId == positionId);
 
             if (queueNode == null)
             {
@@ -117,12 +118,12 @@ namespace KappaQueue.Controllers
         /// <response code="200">Должность удалена, возвращена информация по всем должностям очереди</response>
         /// <response code="401">Пользователь не аутентифицирован</response>
         /// <response code="403">У пользователя нет прав на удаление должности из очереди</response>
-        [HttpDelete("{id:int}/nodes/{positionId:int}")]
+        [HttpDelete("{id:int}/stages/{positionId:int}")]
         [ProducesResponseType(typeof(List<Queue>), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_QUEUES + "," + RightsRef.ASSIGN_POSITION_TO_QUEUE)]
         public ActionResult<List<QueueStage>> DeletePosition(int id, int positionId)
         {
             Queue queue = _db.Queues.Include(q => q.QueueNodes).FirstOrDefault(p => p.Id == id);

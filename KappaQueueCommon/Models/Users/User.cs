@@ -9,8 +9,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Net;
-using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 
 namespace KappaQueueCommon.Models.Users
@@ -167,7 +165,7 @@ namespace KappaQueueCommon.Models.Users
         public static User[] Seed()
         {     
             User[] users = new User[] {
-                new User{ Id = 1, FirstName = "Администратор", LastName = "Администратор", Username = "admin", Password = "admin", EntityGuid = Guid.NewGuid() }
+                new User { Id = 1, FirstName = "Администратор", LastName = "Администратор", Username = "admin", Password = "admin", EntityGuid = Guid.NewGuid() }
             };            
 
             return users;

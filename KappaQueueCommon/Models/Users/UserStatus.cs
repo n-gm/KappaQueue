@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
+using System.Text.Json.Serialization;
 
 namespace KappaQueueCommon.Models.Users
 {
@@ -26,6 +24,7 @@ namespace KappaQueueCommon.Models.Users
         [Key]
         public uint UserId { get; set; }
         
+        [JsonIgnore]
         [ForeignKey("UserId")]
         public User User { get; set; }
 
@@ -33,6 +32,7 @@ namespace KappaQueueCommon.Models.Users
         [Required]
         public byte StateId { get; set; }
 
+        [JsonIgnore]
         [ForeignKey("StateId")]
         public UserState UserState { get; set; }
 

@@ -41,13 +41,54 @@
         </member>
         <member name="M:KappaQueue.Controllers.ClientsController.GetClient(System.Int32)">
             <summary>
-            Получить информацию по всем пользователям
+            Получить информацию по клиенту
             </summary>
             <returns>Список всех пользователей</returns>
-            <param name="startTime">Дата, с которой возвращать выборку</param>
-            <response code="200">Возвращен список всех пользователей в системе</response>
+            <param name="id">Идентификатор клиента</param>
+            <response code="200">Возвращен список всех клиентов</response>
             <response code="401">Пользователь не аутентифицирован</response>
-            <response code="403">У пользователя недостаточно прав для просмотра всех пользователей</response>
+            <response code="403">У пользователя недостаточно прав для просмотра клиента</response>
+        </member>
+        <member name="M:KappaQueue.Controllers.ClientsController.CreateClient(KappaQueueCommon.Common.DTO.ClientAddDto)">
+            <summary>
+            Создать клиента
+            </summary>
+            <returns>Список всех пользователей</returns>
+            <param name="addClient">Структура для создания клиента</param>
+            <response code="200">Возвращен созданные клиент</response>
+            <response code="400">Отсутствует очередь с требуемым идентификатором</response>
+            <response code="401">Пользователь не аутентифицирован</response>
+            <response code="403">У пользователя недостаточно прав для создание клиента</response>
+            <response code="500">В процессе работы с БД возникла ошибка, клиент не создан</response>
+        </member>
+        <member name="M:KappaQueue.Controllers.ClientsController.ChangeClient(System.Int32,System.Nullable{System.Byte},System.Nullable{System.Boolean},KappaQueueCommon.Common.DTO.ClientChangeDto)">
+            <summary>
+            Изменить параметры клиента
+            </summary>
+            <returns>Список всех пользователей</returns>
+            <param name="id">Идентификатор клиента</param>
+            <param name="changeClient">JSON с новыми параметрами клиента</param>
+            <param name="outOfOrder">Признак "Вне очереди" для клиента</param>
+            <param name="stateId">Состояние клиента</param>
+            <response code="200">Возвращен список всех клиентов</response>
+            <response code="400">Пользователь с заданным идентификатором не существует</response>
+            <response code="401">Пользователь не аутентифицирован</response>
+            <response code="403">У пользователя недостаточно прав для изменения клиента</response>
+        </member>
+        <member name="M:KappaQueue.Controllers.ClientsController.DeleteClient(System.Int32)">
+            <summary>
+            Удалить клиента
+            </summary>
+            <returns>Список всех пользователей</returns>
+            <param name="id">Идентификатор клиента</param>
+            <response code="200">Возвращен список всех клиентов</response>
+            <response code="401">Пользователь не аутентифицирован</response>
+            <response code="403">У пользователя недостаточно прав для просмотра клиента</response>
+        </member>
+        <member name="T:KappaQueue.Controllers.MethodsController">
+            <summary>
+            Контроллер для работы с методами api
+            </summary>
         </member>
         <member name="T:KappaQueue.Controllers.PositionsController">
             <summary>
@@ -230,7 +271,7 @@
             <response code="401">Пользователь не аутентифицирован</response>
             <response code="403">У пользователя нет прав на удаление очереди</response>
         </member>
-        <member name="M:KappaQueue.Controllers.QueuesController.GetQueueNodes(System.Int32)">
+        <member name="M:KappaQueue.Controllers.QueuesController.GetQueueStages(System.Int32)">
             <summary>
             Получение списка этапов очереди
             </summary>
@@ -239,7 +280,7 @@
             <response code="401">Пользователь не аутентифицирован</response>
             <response code="403">У пользователя нет прав на просмотр должностей очереди</response>
         </member>
-        <member name="M:KappaQueue.Controllers.QueuesController.AddQueueNode(System.Int32,KappaQueueCommon.Common.DTO.QueueNodeAssignDto)">
+        <member name="M:KappaQueue.Controllers.QueuesController.AddQueueStage(System.Int32,KappaQueueCommon.Common.DTO.QueueStageAssignDto)">
             <summary>
             Добавление должности к очереди
             </summary>
@@ -248,7 +289,7 @@
             <response code="401">Пользователь не аутентифицирован</response>
             <response code="403">У пользователя нет прав на добавление должности в очередь</response>
         </member>
-        <member name="M:KappaQueue.Controllers.QueuesController.ChangeQueueNode(System.Int32,System.Int32,KappaQueueCommon.Common.DTO.QueueNodeAssignDto)">
+        <member name="M:KappaQueue.Controllers.QueuesController.ChangeQueueNode(System.Int32,System.Int32,KappaQueueCommon.Common.DTO.QueueStageAssignDto)">
             <summary>
             Изменение привязки должности в очереди
             </summary>
@@ -336,16 +377,6 @@
             <response code="200">Роли добавлены, в тело запроса возвращен актуальный список ролей пользователя</response>
             <response code="401">Пользователь не аутентифицирован</response>
             <response code="403">У пользователя недостаточно прав для добавления ролей</response>
-        </member>
-        <member name="M:KappaQueue.Controllers.UsersController.ChangeUserRoles(System.Int32,KappaQueueCommon.Common.DTO.UserRoleAddDto)">
-            <summary>
-            Изменить роли пользователя - недостающие роли добавляются, лишние - удаляются
-            </summary>
-            <param name="id">Идентификатор пользователя</param>
-            <param name="addRoles">Список добавляемых идентификаторов ролей</param>
-            <response code="200">Роли изменены, в тело запроса возвращен актуальный список ролей пользователя</response>
-            <response code="401">Пользователь не аутентифицирован</response>
-            <response code="403">У пользователя недостаточно прав для изменения ролей</response>
         </member>
         <member name="M:KappaQueue.Controllers.UsersController.ChangeUserRoles(System.Int32,System.Byte)">
             <summary>

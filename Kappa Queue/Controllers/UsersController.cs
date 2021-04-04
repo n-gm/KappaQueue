@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Claims;
 using KappaQueueCommon.Common.DTO;
 using KappaQueueCommon.Common.References;
@@ -8,6 +9,7 @@ using KappaQueueCommon.Models.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 
@@ -37,11 +39,12 @@ namespace KappaQueue.Controllers
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(typeof(List<User>), 200)]
+        [ProducesResponseType(401)]
         [ProducesResponseType(403)]
-        [Authorize(Roles = RightsRef.GET_USERS)]
+        [Authorize(Roles = RightsRef.ALL_USERS + "," + RightsRef.GET_USERS)]
         public ActionResult<List<User>> GetUsers()
         {
-            return Ok(_db.Users.Include(u => u.Roles).Include(u => u.Rooms).Include(u => u.Positions).ToList());
+            return Ok(_db.Users.Include(u => u.Roles).ThenInclude(ur => ur.UserRights).Include(u => u.Rooms).Include(u => u.Positions).ToList());
         }
 
         /// <summary>
@@ -51,33 +54,45 @@ namespace KappaQueue.Controllers
         /// <response code="200">Возвращен пользователь с идентификатором id</response>
         /// <response code="401">Пользователь не аутентифицирован</response>
         /// <response code="403">У пользователя недостаточно прав для просмотра пользователя</response>
+        /// <response code="404">Пользователь с запрошенным идентификатором не найден</response>
         [HttpGet("{id:int}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(User), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
-        [Authorize(Roles = RightsRef.GET_USER)]
+        [ProducesResponseType(404)]
+        [Authorize(Roles = RightsRef.ALL_USERS + "," + RightsRef.GET_USER)]
         public ActionResult<User> GetUser(int id)
         {
-            User user = _db.Users.Include(u => u.Roles).Include(u => u.Rooms).FirstOrDefault(u => u.Id == id);
+            User user = _db.Users.Include(u => u.Roles).ThenInclude(ur => ur.UserRights).Include(u => u.Rooms).FirstOrDefault(u => u.Id == id);
 
-            return Ok(user);
+            if (user != null)
+            {
+                return Ok(user);
+            } else
+            {
+                return NotFound();
+            }
         }
-        
+
         /// <summary>
         /// Создать пользователя
         /// </summary>
         /// <returns>Список всех пользователей</returns>
         /// <response code="200">Пользователь успешно создан, в ответ возвращена информация по пользователю</response>
+        /// <response code="400">Пользователь с заданными логином уже существует</response>
         /// <response code="401">Пользователь не аутентифицирован</response>
         /// <response code="403">У пользователя недостаточно прав для создания других пользователей</response>
+        /// <response code="415">В заголовке неверно указано поле Content-type, либо в теле сообщения содержится не JSON</response>
         [HttpPost]
         [Produces("application/json")]
+        [Consumes("application/json")]
         [ProducesResponseType(typeof(User), 200)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
-        [Consumes("application/json")]
-        [Authorize(Roles = RightsRef.CREATE_USER)]
+        [ProducesResponseType(415)]
+        [Authorize(Roles = RightsRef.ALL_USERS + "," + RightsRef.CREATE_USER)]
         public ActionResult<User> AddUser([FromBody]UserAddDto addUser)
         {
             if (_db.Users.FirstOrDefault(u => u.Username.Equals(addUser.Username)) != null)
@@ -89,7 +104,7 @@ namespace KappaQueue.Controllers
             _db.SaveChanges();
 
             UserStatus status = new UserStatus(user);
-            _db.UserStatuses.Add(status);
+            user.Status = status;
             _db.SaveChanges();
 
             return Ok(user);
@@ -145,7 +160,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
-        [Authorize(Roles = RightsRef.DELETE_USER)]
+        [Authorize(Roles = RightsRef.ALL_USERS + "," + RightsRef.DELETE_USER)]
         public ActionResult<User> DeleteUser(int id)
         {
             if (id == 1)

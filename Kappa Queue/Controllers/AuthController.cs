@@ -5,7 +5,6 @@ using KappaQueueCommon.Common.DTO;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Models.Users;
 using KappaQueueCommon.Utils;
-using KappaQueueEvents.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +17,8 @@ namespace KappaQueue.Controllers
     public class AuthController : ControllerBase
     {
         private readonly QueueDBContext _db;
-        private readonly IEventHandler _handler; 
 
-        public AuthController(QueueDBContext context, IEventHandler eventHandler)
+        public AuthController(QueueDBContext context)
         {
             _db = context;
         }
@@ -39,8 +37,8 @@ namespace KappaQueue.Controllers
 
         public ActionResult<string> Auth(string username,
                                         string password)
-        {
-            User user = _db.Users.Include(ur => ur.Roles).FirstOrDefault(u => u.Username.Equals(username) && !u.Blocked);
+        {            
+            User user = _db.Users.Include(ur => ur.Roles).ThenInclude(ur => ur.UserRights).FirstOrDefault(u => u.Username.Equals(username) && !u.Blocked);
 
             if (user?.CheckPassword(password) ?? false)
             {

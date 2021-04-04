@@ -3,8 +3,8 @@ using System.IO;
 using KappaQueueCommon.Common.Interfaces;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Utils;
-using KappaQueueEvents.Events;
-using KappaQueueEvents.Interfaces;
+using KappaQueueCore.Interfaces;
+using KappaQueueCore.Tickets;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -29,11 +29,10 @@ namespace KappaQueue
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            CoreEventHandler handler = new CoreEventHandler();
-            services.AddSingleton<IEventHandler>(handler); 
+            services.AddSingleton<ITicketEnumerator, TicketEnumerator>();
             services.AddControllersWithViews();
             services.AddControllers();
-
+                        
             services.AddSwaggerGen(c =>
             {
                 var filePath = Path.Combine(System.AppContext.BaseDirectory, "KappaQueue.xml");
@@ -102,9 +101,12 @@ namespace KappaQueue
                         case QueueDBContext.MSSQL:
                             options.UseSqlServer(Configuration.GetValue<string>("ConnectionString", ""));
                             break;
-                        case QueueDBContext.SQLITE:
-                        default:
+                        case QueueDBContext.SQLITE:                        
                             options.UseSqlite(Configuration.GetValue<string>("ConnectionString", ""));
+                            break;
+                        case QueueDBContext.INMEMORY:
+                        default:
+                            options.UseInMemoryDatabase("KappaDatabase");
                             break;
                     }
                 });
@@ -122,7 +124,7 @@ namespace KappaQueue
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-            }
+            }            
 
             app.UseAuthentication();
             //    app.UseHttpsRedirection();

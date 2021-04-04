@@ -1,10 +1,8 @@
 ﻿using KappaQueueCommon.Models.Positions;
-using KappaQueueCommon.Models.Queues;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace KappaQueueCommon.Models.Clients
 {
@@ -23,6 +21,14 @@ namespace KappaQueueCommon.Models.Clients
 
         [ForeignKey("ClientId")]
         public Client Client { get; set; }
+
+        [Column("out_of_order")]
+        [Required]
+        public bool OutOfOrder { get; set; } = false;
+
+        [Column("free_after_stage")]
+        [Required]
+        public bool FreeAfterStage { get; set; } = true;
 
         [Column("start_time")]
         public DateTime? StartTime { get; set; } = null;

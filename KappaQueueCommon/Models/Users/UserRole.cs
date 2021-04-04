@@ -1,10 +1,8 @@
-﻿using KappaQueueCommon.Models.Context;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Net;
 using System.Text.Json.Serialization;
 
 namespace KappaQueueCommon.Models.Users
@@ -36,15 +34,16 @@ namespace KappaQueueCommon.Models.Users
         public List<User> Users { get; set; } = new List<User>();
 
         public List<UserRight> UserRights { get; set; } = new List<UserRight>();
+
         public static UserRole[] Seed()
         {
             UserRole[] roles = new UserRole[]
             {
-                new UserRole { Id = 1, Name = "Администратор", Description = "Администратор", Code = "admin"},
-                new UserRole { Id = 2, Name = "Управляющий", Description = "Управляющий", Code = "manager"},
-                new UserRole { Id = 3, Name = "Выдача талона", Description = "Выдача талона", Code = "ticketer"},
-                new UserRole { Id = 4, Name = "Исполнитель", Description = "Исполнитель", Code = "performer"},
-                new UserRole { Id = 5, Name = "Терминал", Description = "Терминал", Code = "terminal"}
+            //    new UserRole { Id = 1, Name = "Администратор", Description = "Администратор", Code = "admin"},
+                new UserRole { Id = 1, Name = "Управляющий", Description = "Управляющий", Code = "manager"},
+                new UserRole { Id = 2, Name = "Выдача талона", Description = "Выдача талона", Code = "ticketer"},
+                new UserRole { Id = 3, Name = "Исполнитель", Description = "Исполнитель", Code = "performer"},
+                new UserRole { Id = 4, Name = "Терминал", Description = "Терминал", Code = "terminal"}
             };
 
             return roles;

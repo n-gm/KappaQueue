@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Text;
+using System.Text.Json.Serialization;
 
 namespace KappaQueueCommon.Models.Users
 {
@@ -32,6 +32,7 @@ namespace KappaQueueCommon.Models.Users
         [MaxLength(256)]
         public string Description { get; set; }
 
+        [JsonIgnore]
         public List<UserRole> UserRoles { get; set; } = new List<UserRole>();
 
         public static UserRight[] Seed()
@@ -72,16 +73,14 @@ namespace KappaQueueCommon.Models.Users
 
         public static void AfterSeed(QueueDBContext context)
         {
-            List<UserRight> rights = new List<UserRight>(Seed());
+            List<UserRight> rights = context.UserRights.ToList();
 
-            UserRole admRole = context.UserRoles.FirstOrDefault(ur => ur.Id == 1);
-            UserRole manRole = context.UserRoles.FirstOrDefault(ur => ur.Id == 2);
-            UserRole ticketer = context.UserRoles.FirstOrDefault(ur => ur.Id == 3);
-            UserRole performer = context.UserRoles.FirstOrDefault(ur => ur.Id == 4);
-            UserRole terminal = context.UserRoles.FirstOrDefault(ur => ur.Id == 5);
+            UserRole manRole = context.UserRoles.FirstOrDefault(ur => ur.Id == 1);
+            UserRole ticketer = context.UserRoles.FirstOrDefault(ur => ur.Id == 2);
+            UserRole performer = context.UserRoles.FirstOrDefault(ur => ur.Id == 3);
+            UserRole terminal = context.UserRoles.FirstOrDefault(ur => ur.Id == 4);
 
-            admRole.UserRights.AddRange(rights);
-            manRole.UserRights.AddRange(rights.Where(r => r.Id >= 1 && r.Id <= 26));
+            manRole.UserRights.AddRange(rights);            
             ticketer.UserRights.AddRange(rights.Where(r => new byte[] { 14, 15, 21, 22 }.Contains(r.Id)));
 
             context.SaveChanges();

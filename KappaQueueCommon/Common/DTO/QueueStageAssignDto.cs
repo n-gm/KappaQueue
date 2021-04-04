@@ -1,6 +1,6 @@
 ﻿namespace KappaQueueCommon.Common.DTO
 {
-    public class QueueNodeAssignDto
+    public class QueueStageAssignDto
     {
         /// <summary>
         /// Идентификатор должности
@@ -14,5 +14,9 @@
         /// Этап вне очереди
         /// </summary>
         public bool OutOfOrder { get; set; }
+        /// <summary>
+        /// Освобождать после обследования
+        /// </summary>
+        public bool FreeAfterStage { get; set; }
     }
 }

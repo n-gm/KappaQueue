@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace KappaQueueCommon.Models.Clients
 {
@@ -27,11 +25,12 @@ namespace KappaQueueCommon.Models.Clients
         {
             return new ClientState[]
             {
-                new ClientState { Id = 1, Name = "Ожидание", Description = "Ожидание"},
-                new ClientState { Id = 2, Name = "Свободен", Description = "Свободен"},
-                new ClientState { Id = 3, Name = "Приглашен", Description = "Приглашен к специалисту" },
-                new ClientState { Id = 4, Name = "Занят", Description = "Занят"},
-                new ClientState { Id = 5, Name = "Завершено", Description = "Все этапы пройдены"},
+                new ClientState { Id = 1, Name = "Не активирован", Description = "Не активирован"},
+                new ClientState { Id = 2, Name = "Ожидание", Description = "Ожидание"},
+                new ClientState { Id = 3, Name = "Свободен", Description = "Свободен"},
+                new ClientState { Id = 4, Name = "Приглашен", Description = "Приглашен к специалисту" },
+                new ClientState { Id = 5, Name = "Занят", Description = "Занят"},
+                new ClientState { Id = 6, Name = "Завершено", Description = "Все этапы пройдены"},
                 new ClientState { Id = 255, Name = "Приостановлено", Description = "Приостановлено"}
             };
         }

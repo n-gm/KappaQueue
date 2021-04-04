@@ -1,4 +1,5 @@
-﻿using KappaQueueCommon.Models.Queues;
+﻿using KappaQueueCommon.Common.References;
+using KappaQueueCommon.Models.Queues;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin,ticketer")]
+        [Authorize(Roles = RightsRef.ALL_QUEUE_GROUPS + "," + RightsRef.GET_QUEUE_GROUP + "," + RightsRef.GET_QUEUE_GROUPS)]
         public ActionResult<List<Queue>> GetQueues(int id)
         {
             QueueGroup group = _db.QueueGroups.Include(qg => qg.Queues).ThenInclude(q => q.QueueNodes).ThenInclude(qn => qn.Position).FirstOrDefault(q => q.Id == id);
@@ -38,7 +39,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin,ticketer")]
+        [Authorize(Roles = RightsRef.ALL_QUEUE_GROUPS + "," + RightsRef.GET_QUEUE_GROUP + "," + RightsRef.GET_QUEUE_GROUPS)]
         public ActionResult<Queue> GetQueue(int id, int queueId)
         {
             QueueGroup group = _db.QueueGroups.Include(qg => qg.Queues).ThenInclude(q => q.QueueNodes).ThenInclude(qn => qn.Position).FirstOrDefault(q => q.Id == id);
@@ -59,7 +60,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_QUEUE_GROUPS + "," + RightsRef.ASSIGN_QUEUE_TO_GROUP)]
         public ActionResult<List<Queue>> AddQueueToGroup(int id, int queueId)
         {
             QueueGroup group = _db.QueueGroups.Include(qg => qg.Queues).ThenInclude(q => q.QueueNodes).ThenInclude(qn => qn.Position).FirstOrDefault(q => q.Id == id);
@@ -90,7 +91,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_QUEUE_GROUPS + "," + RightsRef.ASSIGN_QUEUE_TO_GROUP)]
         public ActionResult<List<QueueGroup>> DeleteQueueFromGroup(int id, int queueId)
         {           
             if (id == 1)

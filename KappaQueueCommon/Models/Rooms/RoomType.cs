@@ -8,7 +8,7 @@ namespace KappaQueueCommon.Models.Rooms
     [Table("room_types")]
     public class RoomType
     {
-        [Column("room_type_id")]
+        [Column("id")]
         [Required]
         [Key]
         public byte Id { get; set; }

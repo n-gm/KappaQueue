@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using KappaQueueCommon.Common.DTO;
+using KappaQueueCommon.Common.References;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Models.Queues;
 using Microsoft.AspNetCore.Authorization;
@@ -38,7 +39,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin,ticketer")]
+        [Authorize(Roles = RightsRef.ALL_QUEUES + "," + RightsRef.GET_QUEUES)]
         public ActionResult<List<Queue>> GetQueues()
         {
             return Ok(_db.Queues.Include(q => q.QueueNodes).ThenInclude(qn => qn.Position).ToList());
@@ -55,7 +56,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_QUEUES + "," + RightsRef.GET_QUEUE)]
         public ActionResult<List<Queue>> GetQueue(int id)
         {
             return Ok(_db.Queues.Include(q => q.QueueNodes).ThenInclude(qn => qn.Position).FirstOrDefault(q => q.Id == id));
@@ -75,7 +76,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_QUEUES + "," + RightsRef.CREATE_QUEUE)]
         public ActionResult<Queue> AddQueue([FromBody] QueueAddDto addQueue)
         {
             if (string.IsNullOrEmpty(addQueue.Name) || string.IsNullOrEmpty(addQueue.Prefix))
@@ -110,7 +111,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(403)]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_QUEUES + "," + RightsRef.CHANGE_QUEUE)]
         public ActionResult<Queue> ChangePosition(int id, [FromBody] QueueAddDto changeQueue)
         {
             if (string.IsNullOrEmpty(changeQueue.Name) || string.IsNullOrEmpty(changeQueue.Prefix))
@@ -146,7 +147,7 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [Produces("application/json")]
-        [Authorize(Roles = "manager,admin")]
+        [Authorize(Roles = RightsRef.ALL_QUEUES + "," + RightsRef.DELETE_QUEUE)]
         public ActionResult<List<Queue>> DeletePosition(int id)
         {
             Queue queue = _db.Queues.FirstOrDefault(p => p.Id == id);

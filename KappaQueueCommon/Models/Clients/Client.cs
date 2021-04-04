@@ -1,11 +1,11 @@
 ﻿using KappaQueueCommon.Common.Classes;
+using KappaQueueCommon.Common.DTO;
 using KappaQueueCommon.Models.Queues;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace KappaQueueCommon.Models.Clients
 {
@@ -13,6 +13,46 @@ namespace KappaQueueCommon.Models.Clients
     [Index("CreateTime", "StateId", IsUnique = false)]
     public class Client : QueueEntity
     {
+
+        public Client()
+        {
+
+        }
+
+        public Client(ClientAddDto client)
+        {
+            QueueId = client.QueueId;
+            OutOfOrder = client.OutOfOrder;         
+        }
+
+        public void AssignStages(QueueStageAssignDto stage)
+        {
+            ClientStage clientStage = new ClientStage()
+            {
+                ClientId = Id,
+                PositionId = stage.PositionId,
+                Priority = stage.Priority,
+                OutOfOrder = stage.OutOfOrder,
+                FreeAfterStage = stage.FreeAfterStage
+            };
+
+            ClientStages.Add(clientStage);
+        }
+
+        public void AssignQueueStage(QueueStage stage)
+        {
+            ClientStage clientStage = new ClientStage()
+            {
+                ClientId = Id,
+                PositionId = stage.PositionId,
+                Priority = stage.Priority,
+                OutOfOrder = stage.OutOfOrder,
+                FreeAfterStage = stage.FreeAfterStage
+            };
+            
+            ClientStages.Add(clientStage);
+        }
+
         [Column("id")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -22,13 +62,18 @@ namespace KappaQueueCommon.Models.Clients
         [Required]
         public uint QueueId { get; set; }
 
+        [Column("prefix")]
+        [Required]
+        [MaxLength(3)]
+        public string Prefix { get; set; }
+
         [Column("number")]
         [Required]
         public int Number { get; set; }
 
         [Column("state_id")]
         [Required]
-        public byte StateId { get; set; } = (byte)ClientStateEnum.WAITING;
+        public byte StateId { get; set; } = (byte)ClientStateEnum.NOT_ACTIVATED;
 
         [ForeignKey("StateId")]
         public ClientState State { get; set; }
@@ -48,6 +93,6 @@ namespace KappaQueueCommon.Models.Clients
         public Queue Queue { get; set; }
 
 
-        public List<ClientStage> ClientStages { get; set; }
+        public List<ClientStage> ClientStages { get; set; } = new List<ClientStage>();
     }
 }

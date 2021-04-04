@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
+using System.Text.Json.Serialization;
 
 namespace KappaQueueCommon.Models.Users
 {
@@ -16,6 +14,7 @@ namespace KappaQueueCommon.Models.Users
         [Required]
         public uint UserId { get; set; }
 
+        [JsonIgnore]
         [ForeignKey("UserId")]
         public User User { get; set; }
 
