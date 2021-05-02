@@ -24,6 +24,10 @@ namespace KappaQueue.Controllers
     {
         private readonly QueueDBContext _db;
 
+        /// <summary>
+        /// Контроллер для работы с пользователями       
+        /// </summary>
+        /// <param name="context"></param>
         public UsersController(QueueDBContext context)
         {
             _db = context;
@@ -44,7 +48,13 @@ namespace KappaQueue.Controllers
         [Authorize(Roles = RightsRef.ALL_USERS + "," + RightsRef.GET_USERS)]
         public ActionResult<List<User>> GetUsers()
         {
-            return Ok(_db.Users.Include(u => u.Roles).ThenInclude(ur => ur.UserRights).Include(u => u.Rooms).Include(u => u.Positions).ToList());
+            return Ok(_db.Users
+                        .Include(u => u.Roles)
+                            .ThenInclude(ur => ur.UserRights)
+                        .Include(u => u.Rooms)
+                        .Include(u => u.Positions)
+                        .Include(u => u.Status)
+                        .ToList());
         }
 
         /// <summary>
@@ -64,15 +74,19 @@ namespace KappaQueue.Controllers
         [Authorize(Roles = RightsRef.ALL_USERS + "," + RightsRef.GET_USER)]
         public ActionResult<User> GetUser(int id)
         {
-            User user = _db.Users.Include(u => u.Roles).ThenInclude(ur => ur.UserRights).Include(u => u.Rooms).FirstOrDefault(u => u.Id == id);
+            User user = _db.Users
+                            .Include(u => u.Roles)
+                                .ThenInclude(ur => ur.UserRights)
+                            .Include(u => u.Rooms)
+                            .Include(u => u.Positions)
+                            .Include(u => u.Status)
+                            .FirstOrDefault(u => u.Id == id);
 
             if (user != null)
-            {
                 return Ok(user);
-            } else
-            {
+            else
                 return NotFound();
-            }
+
         }
 
         /// <summary>
@@ -99,15 +113,20 @@ namespace KappaQueue.Controllers
                 return BadRequest("Пользователь с заданным логином уже существует");
 
             User user = new User(addUser);
+            if (ModelState.IsValid)
+            {
+                _db.Users.Add(user);
+                _db.SaveChanges();
 
-            _db.Users.Add(user);
-            _db.SaveChanges();
+                UserStatus status = new UserStatus(user);
+                user.Status = status;
+                _db.SaveChanges();
 
-            UserStatus status = new UserStatus(user);
-            user.Status = status;
-            _db.SaveChanges();
-
-            return Ok(user);
+                return Ok(user);
+            } else
+            {
+                return BadRequest("");
+            }
         }
 
         /// <summary>

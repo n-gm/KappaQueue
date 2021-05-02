@@ -5,6 +5,9 @@ using KappaQueueCommon.Common.DTO;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Models.Users;
 using KappaQueueCommon.Utils;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -33,16 +36,25 @@ namespace KappaQueue.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(string), 200)]
         [ProducesResponseType(401)]
+        [Produces("application/json")]
         [AllowAnonymous]
 
-        public ActionResult<string> Auth(string username,
+        public ActionResult<AuthResponseDto> Auth(string username,
                                         string password)
         {            
             User user = _db.Users.Include(ur => ur.Roles).ThenInclude(ur => ur.UserRights).FirstOrDefault(u => u.Username.Equals(username) && !u.Blocked);
 
             if (user?.CheckPassword(password) ?? false)
             {
-                return Ok(AuthUtils.CreateEncryptedToken(user));
+                AuthResponseDto response = new AuthResponseDto()
+                {
+                    AccessToken = AuthUtils.CreateEncryptedToken(user),
+                    TokenActiveTime = AuthUtils.TOKEN_TTL
+                };
+
+                HttpContext.Response.Cookies.Append("Bearer", response.AccessToken);                
+
+                return Ok(response);
             }
             else
             {
@@ -60,9 +72,10 @@ namespace KappaQueue.Controllers
         [ProducesResponseType(typeof(string), 200)]
         [ProducesResponseType(401)]
         [Consumes("application/json")]
+        [Produces("application/json")]
         [AllowAnonymous]
 
-        public ActionResult<string> Auth([FromBody] AuthorizationNode node)
+        public ActionResult<AuthResponseDto> Auth([FromBody] AuthorizationNode node)
         {
             return Auth(node.Username, node.Password);
         }
@@ -76,6 +89,7 @@ namespace KappaQueue.Controllers
         [HttpGet("refresh-token")]
         [ProducesResponseType(typeof(string), 200)]
         [ProducesResponseType(401)]
+        [Produces("application/json")]
         [Authorize(Roles = "admin, manager, ticketer, performer")]
         public ActionResult<string> RefreshToken()
         {
@@ -90,7 +104,13 @@ namespace KappaQueue.Controllers
             if (user == null)
                 return BadRequest();
 
-            return Ok(AuthUtils.CreateEncryptedToken(user));
+            AuthResponseDto response = new AuthResponseDto()
+            {
+                AccessToken = AuthUtils.CreateEncryptedToken(user),
+                TokenActiveTime = AuthUtils.TOKEN_TTL
+            };
+
+            return Ok(response);
         }
     }
 }

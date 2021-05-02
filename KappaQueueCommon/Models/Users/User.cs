@@ -3,6 +3,8 @@ using KappaQueueCommon.Models.Clients;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Models.Positions;
 using KappaQueueCommon.Models.Rooms;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -24,6 +26,8 @@ namespace KappaQueueCommon.Models.Users
         [MaxLength(64)]
         [Required]
         [JsonIgnore]
+        [BindRequired]
+        [BindProperty]
         public string _password { get; set; }
 
         /// <summary>
@@ -35,6 +39,7 @@ namespace KappaQueueCommon.Models.Users
         [Required]
         [Key]
         [JsonPropertyName("id")]
+        [BindNever]
         public uint Id { get; set; }
 
         /// <summary>
@@ -44,6 +49,8 @@ namespace KappaQueueCommon.Models.Users
         [Column("first_name")]
         [Required]
         [MaxLength(32)]
+        [BindRequired]
+        [BindProperty]
         public string FirstName { get; set; }
 
         /// <summary>
@@ -52,6 +59,7 @@ namespace KappaQueueCommon.Models.Users
         /// <example>Иванович</example>
         [Column("middle_name")]
         [MaxLength(32)]
+        [BindProperty]
         public string MiddleName { get; set; }
 
         /// <summary>
@@ -60,6 +68,8 @@ namespace KappaQueueCommon.Models.Users
         /// <example>Иванов</example>
         [Column("last_name")]
         [MaxLength(32)]
+        [BindProperty]
+        [BindRequired]
         public string LastName { get; set; }
 
         /// <summary>
@@ -68,8 +78,11 @@ namespace KappaQueueCommon.Models.Users
         /// <example>Ivanov</example>
         [Column("username")]
         [MaxLength(32)]
+        [BindProperty]
+        [BindRequired]
         public string Username { get; set; }
         
+        [BindNever]
         public UserStatus Status { get; set; }
 
         /// <summary>
@@ -77,6 +90,7 @@ namespace KappaQueueCommon.Models.Users
         /// </summary>
         [NotMapped]
         [JsonIgnore]
+        [BindNever]
         public string Password { 
             set
             {
@@ -88,7 +102,8 @@ namespace KappaQueueCommon.Models.Users
         /// Признак блокировки пользователя
         /// </summary>
         /// <example>false</example>
-        [Column("blocked")]        
+        [Column("blocked")]
+        [BindNever]
         public bool Blocked { get; set; }
 
         /// <summary>
@@ -101,17 +116,21 @@ namespace KappaQueueCommon.Models.Users
         /// Список привязанных кабинетов к пользователю
         /// </summary>
         [JsonPropertyName("rooms")]
+        [BindNever]
         public List<Room> Rooms { get; set; } = new List<Room>();
 
         /// <summary>
         /// Список должностей сотрудника
         /// </summary>
+        [BindNever]
         public List<Position> Positions { get; set; } = new List<Position>();
 
         [JsonIgnore]
+        [BindNever]
         public List<ClientStageAssignement> Assignements { get; set; } = new List<ClientStageAssignement>();
 
         [JsonIgnore]
+        [BindNever]
         public List<UserJournal> Journal { get; set; } = new List<UserJournal>();
 
         public User()
@@ -191,6 +210,28 @@ namespace KappaQueueCommon.Models.Users
         public bool CheckPassword(string password)
         {
             return BCrypt.Net.BCrypt.Verify(password, _password);
+        }
+
+        public static List<User> GetUsers(QueueDBContext context)
+        {
+            return context.Users
+                        .Include(u => u.Roles)
+                            .ThenInclude(ur => ur.UserRights)
+                        .Include(u => u.Rooms)
+                        .Include(u => u.Positions)
+                        .Include(u => u.Status)
+                        .ToList();
+        }
+
+        public static User GetUser(int id, QueueDBContext context)
+        {
+            return context.Users
+                    .Include(u => u.Roles)
+                        .ThenInclude(ur => ur.UserRights)
+                    .Include(u => u.Rooms)
+                    .Include(u => u.Positions)
+                    .Include(u => u.Status)
+                    .FirstOrDefault(u => u.Id == id);
         }
     }
 }

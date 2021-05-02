@@ -1,0 +1,50 @@
+﻿@using KappaQueueCommon.Models.Users;
+@model List<User>
+
+@{
+    ViewData["Title"] = "Пользователи";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="/css/general.css">
+<link rel="stylesheet" type="text/css" href="/css/users.css">
+
+<h4>Пользователи</h4>
+    <div>
+        <div class="users_button_div">
+            <div class="button_cell">
+                <form>
+                    <button type="submit" formaction="/forms/users/add">Добавить</button>
+                </form>
+            </div>
+        </div>
+        <div class="users_tab_div">
+            <table id="users_table">
+                <tr>
+                    <th>Id</th>
+                    <th>Фамилия</th>
+                    <th>Имя</th>
+                    <th>Отчество</th>
+                    <th>Логин</th>
+                    <th></th>
+                </tr>
+                @foreach (User user in Model)
+                {
+                    <tr>
+                        <td>@user.Id</td>
+                        <td>@user.LastName</td>
+                        <td>@user.FirstName</td>
+                        <td>@user.MiddleName</td>
+                        <td>@user.Username</td>
+                        <td>
+                            <form>
+                                <button type="submit">У</button>
+                            </form>
+                            <form asp-action="Card" asp-controller="UsersForm" asp-route-id="@user.Id">
+                                <button type="submit">И</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>  
+    </div>

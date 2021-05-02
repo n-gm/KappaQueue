@@ -8,6 +8,7 @@ using KappaQueueCommon.Models.Clients;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Models.Queues;
 using KappaQueueCore.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +40,7 @@ namespace KappaQueue.Controllers
         [Produces("application/json")]
         [ProducesResponseType(typeof(List<Client>), 200)]
         [ProducesResponseType(403)]
-        [Authorize(Roles = RightsRef.ALL_CLIENTS + "," + RightsRef.GET_CLIENTS)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = RightsRef.ALL_CLIENTS + "," + RightsRef.GET_CLIENTS)]
         public ActionResult<List<Client>> GetClients(DateTime? startTime)
         {
             return Ok(_db.Clients

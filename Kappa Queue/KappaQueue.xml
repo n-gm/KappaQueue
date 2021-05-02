@@ -314,6 +314,12 @@
             Управление пользователями
             </summary>
         </member>
+        <member name="M:KappaQueue.Controllers.UsersController.#ctor(KappaQueueCommon.Models.Context.QueueDBContext)">
+            <summary>
+            Контроллер для работы с пользователями       
+            </summary>
+            <param name="context"></param>
+        </member>
         <member name="M:KappaQueue.Controllers.UsersController.GetUsers">
             <summary>
             Получить информацию по всем пользователям
@@ -331,6 +337,7 @@
             <response code="200">Возвращен пользователь с идентификатором id</response>
             <response code="401">Пользователь не аутентифицирован</response>
             <response code="403">У пользователя недостаточно прав для просмотра пользователя</response>
+            <response code="404">Пользователь с запрошенным идентификатором не найден</response>
         </member>
         <member name="M:KappaQueue.Controllers.UsersController.AddUser(KappaQueueCommon.Common.DTO.UserAddDto)">
             <summary>
@@ -338,8 +345,10 @@
             </summary>
             <returns>Список всех пользователей</returns>
             <response code="200">Пользователь успешно создан, в ответ возвращена информация по пользователю</response>
+            <response code="400">Пользователь с заданными логином уже существует</response>
             <response code="401">Пользователь не аутентифицирован</response>
             <response code="403">У пользователя недостаточно прав для создания других пользователей</response>
+            <response code="415">В заголовке неверно указано поле Content-type, либо в теле сообщения содержится не JSON</response>
         </member>
         <member name="M:KappaQueue.Controllers.UsersController.ChangeUser(System.Int32,KappaQueueCommon.Common.DTO.UserChangeDto)">
             <summary>
@@ -387,6 +396,19 @@
             <response code="200">Роль удалена, в тело запроса возвращен актуальный список ролей пользователя</response>
             <response code="401">Пользователь не аутентифицирован</response>
             <response code="403">У пользователя недостаточно прав для удаления ролей</response>
+        </member>
+        <member name="M:KappaQueue.Controllers.UsersFormController.#ctor(KappaQueueCommon.Models.Context.QueueDBContext)">
+            <summary>
+            Контроллер для работы с пользователями       
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:KappaQueue.Controllers.UsersFormController.Card(System.Int32)">
+            <summary>
+            Карточка пользователя
+            </summary>
+            <param name="id">Идентификатор пользователя</param>
+            <returns></returns>
         </member>
     </members>
 </doc>

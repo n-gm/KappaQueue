@@ -1,0 +1,33 @@
+﻿@model KappaQueueCommon.Models.Users.User
+
+@{
+    ViewData["Title"] = "Card";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="/css/usercard.css">
+
+<h4>Карточка пользователя</h4>
+<div class="card">        
+    <form asp-action="ChangeUser" asp-controller="Users">    
+        <div class="field">
+            <label asp-for="FirstName">Имя</label>
+            <input type="text" asp-for="FirstName" />
+        </div>
+        <div class="field">
+            <label asp-for="LastName">Фамилия</label>
+            <input type="text" asp-for="LastName" />
+        </div>
+        <div class="field">
+            <label asp-for="Username">Логин</label>
+            <input type="test" asp-for="Username" />
+        </div>
+        <div>
+            <button type="submit">Сохранить</button>
+        </div>
+    </form>
+</div>
+
+<div>
+    <a asp-action="Index">К списку пользователей</a>
+</div>
+

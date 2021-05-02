@@ -1,10 +1,14 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using KappaQueueCommon.Common.Interfaces;
 using KappaQueueCommon.Models.Context;
 using KappaQueueCommon.Utils;
 using KappaQueueCore.Interfaces;
 using KappaQueueCore.Tickets;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +41,7 @@ namespace KappaQueue
             {
                 var filePath = Path.Combine(System.AppContext.BaseDirectory, "KappaQueue.xml");
                 c.IncludeXmlComments(filePath);
-
+                
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -67,10 +71,12 @@ namespace KappaQueue
             services
                 .AddAuthentication(options =>
                 {
-                    options.DefaultAuthenticateScheme = jwtSchemeName;
-                    options.DefaultChallengeScheme = jwtSchemeName;
+                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                .AddJwtBearer(jwtSchemeName, jwtBearerOptions =>
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtBearerOptions =>
                 {
                     jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -88,7 +94,31 @@ namespace KappaQueue
 
                         ClockSkew = TimeSpan.FromSeconds(5)
                     };
-                });
+                    jwtBearerOptions.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            if (context.Request.Cookies.ContainsKey("Bearer"))
+                            {
+                                context.Token = context.Request.Cookies["Bearer"];                                
+                            }
+                            else if (context.Request.Headers.ContainsKey("Authorization"))
+                            {
+                                var authhdr = context.Request.Headers["Authorization"].FirstOrDefault(k => k.StartsWith("Bearer"));
+                                if (!string.IsNullOrEmpty(authhdr))
+                                {
+                                    var keyval = authhdr.Split(" ");
+                                    if (keyval != null && keyval.Length > 1) context.Token = keyval[1];
+                                }
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
+                })/*.AddCookie(options =>
+                {
+                    options.LoginPath = "/Forms/AuthForm/Auth";
+                    options.LogoutPath = "/Forms/AuthForm/Logout";
+                })*/;
 
             services.AddDbContext<QueueDBContext>(
                 options =>

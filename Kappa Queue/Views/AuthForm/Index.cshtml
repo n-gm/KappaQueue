@@ -1,0 +1,22 @@
+﻿
+@{
+    ViewData["Title"] = "Авторизация";
+    ViewData["UsersVisible"] = "hidden";
+    ViewData["RoomsVisible"] = "hidden";
+    ViewData["PositionsVisible"] = "hidden";
+    ViewData["QueuesVisible"] = "hidden";
+    ViewData["ReportsVisible"] = "hidden";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="/css/auth.css">
+
+<h4>Авторизация</h4>
+<div style="margin-left: 40%; width: 20%; padding: 4px;">
+    <input placeholder="Логин" type="text" name="username" id="usernameField"/>  
+    <input placeholder="Пароль" type="password" name="password" id="passwordField"/> <br />
+    <button title="Войти" value="Войти" id="loginButton">Войти</button>
+</div>
+
+@section Scripts {
+    <script src="/js/auth.js"></script>
+}
